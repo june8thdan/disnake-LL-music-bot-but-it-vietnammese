@@ -849,9 +849,9 @@ class LavalinkPlayer(wavelink.Player):
                                   'play', 'back', 'readd_songs', 'stop'])
 
                 embed = disnake.Embed(
-                    description=f"**Các bài hát đã kết thúc ... Sử dụng một trong các lệnh bên dưới để thêm các bài hát hoặc dừng lại "
-                                f"o người chơi.**\n\n`{cmds}`\n\n"
-                                f"** Lưu ý: ** `Người chơi sẽ tự động tắt` "
+                    description=f"**Các bài hát đã kết thúc ... Sử dụng một trong các lệnh bên dưới để thêm các bài hát hoặc tắt "
+                                f"trình phát.**\n\n`{cmds}`\n\n"
+                                f"** Lưu ý: ** `Người chơi sẽ tự động tắt sau` "
                                 f"<t:{int((disnake.utils.utcnow() + datetime.timedelta(seconds=self.idle_timeout)).timestamp())}:R> "
                                 f"`Nếu không có lệnh được sử dụng...`",
                     color=self.bot.get_color(self.guild.me)
