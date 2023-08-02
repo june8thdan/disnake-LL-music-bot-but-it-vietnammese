@@ -103,7 +103,7 @@ class Owner(commands.Cog):
     @commands.is_owner()
     @commands.command(
         hidden=True, aliases=["gls", "lavalink", "lllist", "lavalinkservers"],
-        description="Baixar um arquivo com lista de servidores lavalink para usá-los no sistema de música."
+        description="Tải xuống một tệp với danh sách máy chủ Lavalink để sử dụng chúng trong hệ thống âm nhạc."
     )
     async def getlavaservers(self, ctx: CustomContext):
 
@@ -113,19 +113,19 @@ class Owner(commands.Cog):
 
         await ctx.send(
             embed=disnake.Embed(
-                description="**O arquivo lavalink.ini foi baixado com sucesso!\n"
-                            "Será necessário me reiniciar para usar os servidores deste arquivo.**"
+                description="**Tệp Lavalink.ini đã được tải xuống thành công!\n"
+                            "Bạn sẽ cần khởi động lại để sử dụng các máy chủ của tệp này.**"
             )
         )
 
     updatelavalink_flags = CommandArgparse()
     updatelavalink_flags.add_argument('-force', '--force', action='store_true',
-                                      help="Ignorar a execução/uso do servidor LOCAL.")
+                                      help="Bỏ qua việc thực thi/sử dụng máy chủ cục bộ.")
     updatelavalink_flags.add_argument('-yml', '--yml', action='store_true',
-                                      help="Fazer download do arquivo application.yml.")
+                                      help="Tải tập tin application.yml.")
     updatelavalink_flags.add_argument("-resetids", "-reset", "--resetids", "--reset",
-                                      help="Resetar info de ids das músicas (útil pra evitar problemas com certas "
-                                           "mudanças do lavaplayer/lavalink).")
+                                      help="Đặt lại thông tin ID âm nhạc (hữu ích để tránh các vấn đề với một số "
+                                           "Lavaplayer/Lavalink thay đổi).")
 
     @commands.is_owner()
     @commands.max_concurrency(1, commands.BucketType.user)
@@ -173,7 +173,7 @@ class Owner(commands.Cog):
 
                 for player in node.players.values():
 
-                    txt = "O servidor de música foi reiniciado e a música será retomada em alguns segundos (Por favor aguarde)..."
+                    txt = "Máy chủ âm nhạc đã được khởi động lại và âm nhạc sẽ tiếp tục trong vài giây (vui lòng chờ đợi)..."
 
                     if args.resetids:
 
@@ -204,14 +204,14 @@ class Owner(commands.Cog):
 
         await ctx.send(
             embed=disnake.Embed(
-                description="**O arquivo Lavalink.jar foi atualizado com sucesso!**",
+                description="**Tệp Lavalink.jar đã được cập nhật thành công!**",
                 color=self.bot.get_color(ctx.guild.me)
             )
         )
 
     @commands.is_owner()
-    @panel_command(aliases=["rd", "recarregar"], description="Recarregar os módulos.", emoji="🔄",
-                   alt_name="Carregar/Recarregar módulos.")
+    @panel_command(aliases=["rd", "recarregar"], description="Tải lại các module.", emoji="🔄",
+                   alt_name="Tải lại thư mục module.")
     async def reload(self, ctx: Union[CustomContext, disnake.MessageInteraction]):
 
         data = self.bot.load_modules()
@@ -229,13 +229,13 @@ class Owner(commands.Cog):
         txt = ""
 
         if data["loaded"]:
-            txt += f'**Módulos carregados:** ```ansi\n[0;34m{" [0;37m| [0;34m".join(data["loaded"])}```\n'
+            txt += f'**Tải lên module** ```ansi\n[0;34m{" [0;37m| [0;34m".join(data["loaded"])}```\n'
 
         if data["reloaded"]:
-            txt += f'**Módulos recarregados:** ```ansi\n[0;32m{" [0;37m| [0;32m".join(data["reloaded"])}```\n'
+            txt += f'**Tải lại các module:** ```ansi\n[0;32m{" [0;37m| [0;32m".join(data["reloaded"])}```\n'
 
         if not txt:
-            txt = "**Nenhum módulo encontrado...**"
+            txt = "**Không tìm thấy module...**"
 
         self.bot.pool.config = load_config()
 
@@ -249,14 +249,14 @@ class Owner(commands.Cog):
 
     update_flags = CommandArgparse()
     update_flags.add_argument("-force", "--force", action="store_true",
-                              help="Forçar update ignorando o estado do repositório local).")
+                              help="Buộc cập nhật bỏ qua trạng thái của kho lưu trữ cục bộ).")
     update_flags.add_argument("-pip", "--pip", action="store_true",
-                              help="Instalar/atualizar dependências após a atualização.")
+                              help="Cài đặt/Cập nhật phụ thuộc sau khi cập nhật.")
 
     @commands.is_owner()
     @commands.max_concurrency(1, commands.BucketType.default)
-    @panel_command(aliases=["up", "atualizar"], description="Atualizar meu code usando o git.",
-                   emoji="<:git:944873798166020116>", alt_name="Atualizar Bot", extras={"flags": update_flags})
+    @panel_command(aliases=["up", "atualizar"], description="Cập nhật mã của tôi bằng Git.",
+                   emoji="<:git:944873798166020116>", alt_name="Cập nhật bot", extras={"flags": update_flags})
     async def update(self, ctx: Union[CustomContext, disnake.MessageInteraction], *,
                      opts: str = ""):  # TODO: Rever se há alguma forma de usar commands.Flag sem um argumento obrigatório, ex: --pip.
 
@@ -299,7 +299,7 @@ class Owner(commands.Cog):
             try:
                 pull_log = await run_command("git pull --allow-unrelated-histories -X theirs")
                 if "Already up to date" in pull_log:
-                    raise GenericError("**Já estou com os ultimos updates instalados...**")
+                    raise GenericError("**Tôi đã cài đặt các bản cập nhật cuối cùng...**")
                 out_git += pull_log
 
             except GenericError as e:
@@ -308,7 +308,7 @@ class Owner(commands.Cog):
             except Exception as e:
 
                 if "Already up to date" in str(e):
-                    raise GenericError("Já estou com os ultimos updates instalados...")
+                    raise GenericError("Tôi đã cài đặt các bản cập nhật cuối cùng...")
 
                 elif not "Fast-forward" in str(e):
                     out_git += await self.cleanup_git(force=True)
@@ -324,9 +324,9 @@ class Owner(commands.Cog):
 
             git_log += format_git_log(data)
 
-        text = "`Será necessário me reiniciar após as alterações.`"
+        text = "`Bạn sẽ cần phải khởi động lại sau khi thay đổi.`"
 
-        txt = f"`✅` **[Atualização realizada com sucesso!]({self.bot.pool.remote_git_url}/commits/main)**"
+        txt = f"`✅` **[Cập nhật thành công!]({self.bot.pool.remote_git_url}/commits/main)**"
 
         if git_log:
             txt += f"\n\n{self.format_log(git_log[:10])}"
@@ -358,7 +358,7 @@ class Owner(commands.Cog):
         if args.pip:
 
             embed = disnake.Embed(
-                description="**Instalando as dependências.\nPor favor aguarde...**",
+                description="**Cài đặt các cơ sở.\nVui lòng chờ...**",
                 color=self.bot.get_color(ctx.guild.me)
             )
 
@@ -366,7 +366,7 @@ class Owner(commands.Cog):
 
             await run_command(cmd)
 
-            embed.description = "**As dependências foram instaladas com sucesso!**"
+            embed.description = "**Các cơ sở đã được cài đặt thành công!**"
 
             await msg.edit(embed=embed)
 
@@ -392,20 +392,20 @@ class Owner(commands.Cog):
 
                 await ctx.send(
                     embed=disnake.Embed(
-                        description="**Será necessário atualizar as dependências usando o comando "
-                                    "abaixo no terminal/shell:**\n"
-                                    f"```sh\n{txt}{cmd}```\nou usar usar o comando: "
+                        description="**Nó sẽ là cần thiết để cập nhật các phụ thuộc bằng cách sử dụng lệnh "
+                                    "Dưới đây trên terminal/shell:**\n"
+                                    f"```sh\n{txt}{cmd}```\nhoặc sử dụng lệnh: "
                                     f"```ansi\n[34;1m{prefix}update --force --pip[0m``` \n"
-                                    f"**Nota:** Dependendo da hospedagem (ou que não tenha 150mb de RAM livre "
-                                    f"e 0.5vCPU) você deve enviar o arquivo requirements.txt ao invés de "
-                                    f"usar uma das opções acima ou os botões de instalar dependências abaixo...",
+                                    f"**Lưu ý: ** Tùy thuộc vào lưu trữ (hoặc không 150MB RAM miễn phí "
+                                    f"e 0.5vCPU) vBạn phải gửi tệp yêu cầu.txt thay vì "
+                                    f"Sử dụng một trong các tùy chọn trên hoặc các nút cài đặt bên dưới...",
                         color=self.bot.get_color(ctx.guild.me)
                     ),
                     components=[
                         disnake.ui.Button(label="Download requirements.txt", custom_id="updatecmd_requirements"),
-                        disnake.ui.Button(label="Atualizar dependências",
+                        disnake.ui.Button(label="Cập nhật phụ thuộc",
                                           custom_id="updatecmd_installdeps_" + ("poetry" if use_poetry else "pip")),
-                        disnake.ui.Button(label="Atualizar dependências (force)",
+                        disnake.ui.Button(label="Cập nhật phụ thuộc (lực lượng)",
                                           custom_id="updatecmd_installdeps_force_" + ("poetry" if use_poetry else "pip")),
                     ]
                 )
@@ -428,7 +428,7 @@ class Owner(commands.Cog):
 
             await inter.send(
                 embed=disnake.Embed(
-                    description="**Baixe o arquivo anexado e envie para sua hospedagem via commit etc.**",
+                    description="**Tải xuống tệp đính kèm và gửi nó đến lưu trữ của bạn thông qua cam kết, v.v.**",
                     color=self.bot.get_color(inter.guild.me)
                 ),
                 file=disnake.File("update_reqs.zip")
@@ -468,12 +468,12 @@ class Owner(commands.Cog):
 
     @commands.max_concurrency(1, commands.BucketType.guild)
     @commands.cooldown(1, 10, commands.BucketType.user)
-    @panel_command(aliases=["latest", "lastupdate"], description="Ver minhas atualizações mais recentes.", emoji="📈",
-                   alt_name="Ultimas atualizações", hidden=False)
+    @panel_command(aliases=["latest", "lastupdate"], description="Xem các bản cập nhật mới nhất của tôi.", emoji="📈",
+                   alt_name="Cập nhật cuối cùng", hidden=False)
     async def updatelog(self, ctx: Union[CustomContext, disnake.MessageInteraction], amount: int = 10):
 
         if not os.path.isdir("./.git"):
-            raise GenericError("Não há repositorio iniciado no diretório do bot...\nNota: Use o comando update.")
+            raise GenericError("Không có sự thay thế bắt đầu trong thư mục bot...\nLưu ý: Sử dụng lệnh cập nhật.")
 
         if not self.bot.pool.remote_git_url:
             self.bot.pool.remote_git_url = self.bot.config["SOURCE_REPO"][:-4]
@@ -484,7 +484,7 @@ class Owner(commands.Cog):
 
         git_log += format_git_log(data)
 
-        txt = f"🔰 ** | [Atualizações recentes:]({self.bot.pool.remote_git_url}/commits/main)**\n\n" + self.format_log(
+        txt = f"🔰 ** | [Cập nhật gần đây:]({self.bot.pool.remote_git_url}/commits/main)**\n\n" + self.format_log(
             git_log)
 
         if isinstance(ctx, CustomContext):
@@ -504,37 +504,37 @@ class Owner(commands.Cog):
     async def panel(self, ctx: CustomContext):
 
         embed =disnake.Embed(
-            title="PAINEL DE CONTROLE.",
+            title="BẢNG ĐIỀU KHIỂN.",
             color=self.bot.get_color(ctx.guild.me)
         )
-        embed.set_footer(text="Clique em uma tarefa que deseja executar.")
+        embed.set_footer(text="Nhấp vào một nhiệm vụ bạn muốn thực hiện.")
         await ctx.send(embed=embed, view=PanelView(self.bot))
 
     @commands.has_guild_permissions(manage_guild=True)
-    @commands.command(description="Sincronizar/Registrar os comandos de barra no servidor.", hidden=True)
+    @commands.command(description="Đồng bộ hóa/đăng ký lệnh thanh trên máy chủ.", hidden=True)
     async def syncguild(self, ctx: Union[CustomContext, disnake.MessageInteraction]):
 
         embed = disnake.Embed(
             color=self.bot.get_color(ctx.guild.me),
-            description="**Esse comando não é mais necessário ser usado (A sincronização dos comandos agora "
-                        f"é automática).**\n\n{sync_message(self.bot)}"
+            description="**Lệnh này không còn cần thiết để được sử dụng (việc đồng bộ hóa các lệnh bây giờ "
+                        f"Nó là tự động).**\n\n{sync_message(self.bot)}"
         )
 
         await ctx.send(embed=embed)
 
     @commands.is_owner()
-    @panel_command(aliases=["sync"], description="Sincronizar os comandos de barra manualmente.",
+    @panel_command(aliases=["sync"], description="Đồng bộ hóa các lệnh thanh theo cách thủ công. ",
                    emoji="<:slash:944875586839527444>",
-                   alt_name="Sincronizar comandos manualmente.")
+                   alt_name="Đồng bộ hóa các lệnh bằng tay.")
     async def synccmds(self, ctx: Union[CustomContext, disnake.MessageInteraction]):
 
         if self.bot.config["AUTO_SYNC_COMMANDS"] is True:
             raise GenericError(
-                f"**Isso não pode ser usado com a sincronização automática ativada...**\n\n{sync_message(self.bot)}")
+                f"**Điều này không thể được sử dụng với đồng bộ hóa tự động được kích hoạt...**\n\n{sync_message(self.bot)}")
 
         await self.bot._sync_application_commands()
 
-        txt = f"**Os comandos de barra foram sincronizados com sucesso!**\n\n{sync_message(self.bot)}"
+        txt = f"**Các lệnh thanh đã được đồng bộ hóa thành công!**\n\n{sync_message(self.bot)}"
 
         if isinstance(ctx, CustomContext):
 
@@ -552,13 +552,13 @@ class Owner(commands.Cog):
     @commands.cooldown(1, 10, commands.BucketType.guild)
     @commands.command(
         aliases=["mudarprefixo", "prefix", "changeprefix"],
-        description="Alterar o prefixo do servidor",
+        description="Thay đổi tiền tố máy chủ",
         usage="{prefix}{cmd} [prefixo]\nEx: {prefix}{cmd} >>"
     )
     async def setprefix(self, ctx: CustomContext, prefix: str):
 
         if " " in prefix or len(prefix) > 5:
-            raise GenericError("**O prefixo não pode conter espaços ou ter acima de 5 caracteres.**")
+            raise GenericError("**Tiền tố không thể chứa khoảng trắng hoặc có trên 5 ký tự.**")
 
         try:
             guild_data = ctx.global_guild_data
@@ -572,8 +572,8 @@ class Owner(commands.Cog):
         prefix = disnake.utils.escape_markdown(prefix)
 
         embed = disnake.Embed(
-            description=f"**O prefixo deste servidor agora é:** `{prefix}`\n"
-                        f"**Caso queira restaurar o prefixo padrão use o comando:** `{prefix}{self.resetprefix.name}`",
+            description=f"**Tiền tố của máy chủ này bây giờ là:** `{prefix}`\n"
+                        f"**Nếu bạn muốn khôi phục tiền tố mặc định, hãy sử dụng lệnh:** `{prefix}{self.resetprefix.name}`",
             color=self.bot.get_color(ctx.guild.me)
         )
 
@@ -582,7 +582,7 @@ class Owner(commands.Cog):
     @commands.has_guild_permissions(manage_guild=True)
     @commands.cooldown(1, 10, commands.BucketType.guild)
     @commands.command(
-        description="Resetar o prefixo do servidor (Usar o prefixo padrão do bot)"
+        description="Đặt lại tiền tố máy chủ (sử dụng tiền tố bot mặc định)"
     )
     async def resetprefix(self, ctx: CustomContext):
 
@@ -593,15 +593,15 @@ class Owner(commands.Cog):
             ctx.global_guild_data = guild_data
 
         if not guild_data["prefix"]:
-            raise GenericError("**Nao há prefixo configurado no servidor.**")
+            raise GenericError("**Không có tiền tố được định cấu hình trên máy chủ.**")
 
         guild_data["prefix"] = ""
 
         await self.bot.update_global_data(ctx.guild.id, guild_data, db_name=DBModel.guilds)
 
         embed = disnake.Embed(
-            description=f"**O prefixo do servidor foi resetado com sucesso.\n"
-                        f"O prefixo padrão agora é:** `{disnake.utils.escape_markdown(self.bot.default_prefix)}`",
+            description=f"**Tiền tố máy chủ đã được đặt lại thành công.\n"
+                        f"Tiền tố tiêu chuẩn bây giờ là:** `{disnake.utils.escape_markdown(self.bot.default_prefix)}`",
             color=self.bot.get_color(ctx.guild.me)
         )
 
@@ -610,14 +610,14 @@ class Owner(commands.Cog):
     @commands.cooldown(1, 10, commands.BucketType.guild)
     @commands.command(
         aliases=["uprefix", "spu", "setmyprefix", "spm", "setcustomprefix", "scp", "customprefix", "myprefix"],
-        description="Alterar seu prefixo de usuário (prefixo que irei responder a você independente "
-                    "do prefixo configurado no servidor).",
+        description="Thay đổi tiền tố người dùng của bạn (tiền tố mà tôi sẽ trả lời bạn độc lập "
+                    "với tiền tố được định cấu hình trên máy chủ).",
         usage="{prefix}{cmd} [prefixo]\nEx: {prefix}{cmd} >>"
     )
     async def setuserprefix(self, ctx: CustomContext, prefix: str):
 
         if " " in prefix or len(prefix) > 5:
-            raise GenericError("**O prefixo não pode conter espaços ou ter acima de 5 caracteres.**")
+            raise GenericError("**Tiền tố không thể chứa khoảng trắng hoặc có trên 5 ký tự.**")
 
         try:
             user_data = ctx.global_user_data
@@ -632,15 +632,15 @@ class Owner(commands.Cog):
         prefix = disnake.utils.escape_markdown(prefix)
 
         embed = disnake.Embed(
-            description=f"**O seu prefixo de usuário agora é:** `{prefix}`\n"
-                        f"**Caso queira remover seu prefixo de usuário use o comando:** `{prefix}{self.resetuserprefix.name}`",
+            description=f"**Tiền tố người dùng của bạn bây giờ là:** `{prefix}`\n"
+                        f"**Nếu bạn muốn xóa tiền tố người dùng của mình, hãy sử dụng lệnh:** `{prefix}{self.resetuserprefix.name}`",
             color=self.bot.get_color(ctx.guild.me)
         )
 
         await ctx.send(embed=embed)
 
     @commands.cooldown(1, 10, commands.BucketType.guild)
-    @commands.command(description="Remover seu prefixo de usuário")
+    @commands.command(description="Xóa tiền tố người dùng của bạn")
     async def resetuserprefix(self, ctx: CustomContext):
 
         try:
@@ -650,14 +650,13 @@ class Owner(commands.Cog):
             ctx.global_user_data = user_data
 
         if not user_data["custom_prefix"]:
-            raise GenericError("**Você não possui prefixo configurado.**")
-
+            raise GenericError("**Bạn không có một cấu hình tiền tố. ** ")
         user_data["custom_prefix"] = ""
         self.bot.pool.user_prefix_cache[ctx.author.id] = ""
         await self.bot.update_global_data(ctx.author.id, user_data, db_name=DBModel.users)
 
         embed = disnake.Embed(
-            description=f"**O seu prefixo de usuário foi removido com sucesso.**",
+            description=f"**Tiền tố người dùng của bạn đã bị xóa thành công.**",
             color=self.bot.get_color(ctx.guild.me)
         )
 
@@ -666,13 +665,13 @@ class Owner(commands.Cog):
     @commands.is_owner()
     @commands.command(
         aliases=["guildprefix", "sgp", "gp"], hidden=True,
-        description="Setar um prefixo manualmente pra um server com o id informado (útil para botlists)",
-        usage="{prefix}{cmd} [server id] <prefixo>\nEx: {prefix}{cmd} 1155223334455667788 >>\nNota: Use o comando sem especificar um prefix para removê-lo."
+        description="Đặt tiền tố theo cách thủ công cho máy chủ với ID thông tin (hữu ích cho danh sách thực vật)",
+        usage="{prefix}{cmd} [server id] <prefixo>\nEx: {prefix}{cmd} 1155223334455667788 >>\nLưu ý: Sử dụng lệnh mà không cần chỉ định tiền tố để xóa nó."
     )
     async def setguildprefix(self, ctx: CustomContext, server_id: int, prefix: str = None):
 
         if not 17 < len(str(server_id)) < 24:
-            raise GenericError("**A quantidade de caracteres do id do servidor tem que estar entre 18 a 23.**")
+            raise GenericError("**Lượng ký tự ID máy chủ phải nằm trong khoảng từ 18 đến 23.**")
 
         guild_data = await self.bot.get_global_data(server_id, db_name=DBModel.guilds)
 
@@ -681,19 +680,19 @@ class Owner(commands.Cog):
         if not prefix:
             guild_data["prefix"] = ""
             await ctx.bot.update_global_data(server_id, guild_data, db_name=DBModel.guilds)
-            embed.description = "**O prefixo antecipado do servidor com o id informado foi resetado com sucesso.**"
+            embed.description = "**Tiền tố sớm của máy chủ với ID được thông báo đã được thiết lập lại thành công.**"
 
         else:
             guild_data["prefix"] = prefix
             await self.bot.update_global_data(server_id, guild_data, db_name=DBModel.guilds)
-            embed.description = f"**O prefixo para o servidor com o id informado agora é:** {disnake.utils.escape_markdown(prefix)}"
+            embed.description = f"**Tiền tố cho máy chủ có ID được thông báo bây giờ là:** {disnake.utils.escape_markdown(prefix)}"
 
         await ctx.send(embed=embed)
 
     @commands.is_owner()
     @panel_command(aliases=["expsource", "export", "exs"],
-                   description="Exportar minha source para um arquivo zip.", emoji="💾",
-                   alt_name="Exportar source/código-fonte.")
+                   description="Xuất nguồn của tôi sang tệp zip.", emoji="💾",
+                   alt_name="Xuất mã nguồn/nguồn.")
     async def exportsource(self, ctx:Union[CustomContext, disnake.MessageInteraction], *, flags: str = ""):
 
         if not os.path.isdir("./.git"):
@@ -774,11 +773,11 @@ class Owner(commands.Cog):
 
         try:
             embed = disnake.Embed(
-                description="**Não envie o arquivo source.zip ou o arquivo .env pra ninguém e muito cuidado ao postar "
-                            "print's do conteudo do arquivo .env e não adicione esse arquivo em locais públicos como "
-                            "github, repl.it, glitch.com, etc.**",
+                description="**Không gửi tệp Source.zip hoặc tệp .ENV cho bất kỳ ai và rất cẩn thận khi đăng "
+                            "các nội dung trong tệp .env và không thêm tệp này ở những nơi công cộng như "
+                            "github, repl.it, glitch.com,..v.v.**",
                 color=self.bot.get_color(ctx.guild.me))
-            embed.set_footer(text="Por medida de segurança, esta mensagem será deletada em 2 minutos.")
+            embed.set_footer(text="Để an toàn, thông báo này sẽ bị xóa trong 2 phút.")
 
             msg = await ctx.author.send(
                 embed=embed,
@@ -790,17 +789,17 @@ class Owner(commands.Cog):
 
         except disnake.Forbidden:
             os.remove("./source.zip")
-            raise GenericError("Seu DM está desativado!")
+            raise GenericError("DM của bạn bị vô hiệu hóa!")
 
         if isinstance(ctx, CustomContext):
             await ctx.send(
                 embed=disnake.Embed(
-                    description=f"**O arquivo [source.zip]({msg.jump_url}) foi enviado no seu privado.**",
+                    description=f"**Tệp [Source.zip]({msg.jump_url}) Nó đã được gửi trong riêng tư của bạn.**",
                     color=self.bot.get_color(ctx.guild.me)
                 )
             )
         else:
-            return f"Arquivo [source.zip]({msg.jump_url}) foi enviado com sucesso no seu DM."
+            return f"Tệp [Source.zip]({msg.jump_url}) đã được gửi thành công trong DM của bạn."
 
     def zip_dir(self, filelist: list):
 
@@ -837,12 +836,12 @@ class Owner(commands.Cog):
                     counter += 1
 
         if not counter:
-            raise GenericError(f"**Nenhuma mensagem foi deletada de {amount} verificada(s)...**")
+            raise GenericError(f"**Không có tin nhắn nào bị xóa khỏi {amount} Được xác minh (các)...**")
 
         if counter == 1:
-            txt = "**Uma mensagem foi deletada do seu DM.**"
+            txt = "**Một tin nhắn đã bị xóa khỏi DM của bạn.**"
         else:
-            txt = f"**{counter} mensagens foram deletadas do seu DM.**"
+            txt = f"**{counter} Tin nhắn đã bị xóa khỏi DM của bạn.**"
 
         await ctx.send(embed=disnake.Embed(description=txt, colour=self.bot.get_color(ctx.guild.me)))
 
@@ -853,10 +852,10 @@ class Owner(commands.Cog):
             return
 
         if not await self.bot.is_owner(inter.author):
-            return await inter.send("**Apenas meu dono pode usar este botão!**", ephemeral=True)
+            return await inter.send("**Chỉ chủ sở hữu của tôi mới có thể sử dụng nút này!**", ephemeral=True)
 
         await inter.response.edit_message(
-            content="```ini\n🔒 - [Shell Fechado!] - 🔒```",
+            content="```ini\n🔒 - [Shell Đóng!] - 🔒```",
             attachments=None,
             view=None,
             embed=None
@@ -891,8 +890,8 @@ class Owner(commands.Cog):
             except disnake.Forbidden:
                 traceback.print_exc()
                 raise GenericError(
-                    "**Ocorreu um erro (verifique os logs/terminal ou libere seu DM para o próximo "
-                    "resultado ser enviado diretamente no seu DM).**"
+                    "**Đã xảy ra lỗi (kiểm tra nhật ký/thiết bị đầu cuối hoặc phát hành DM của bạn sang lần tiếp theo "
+                    "Kết quả được gửi trực tiếp đến DM của bạn).**"
                 )
 
         else:
@@ -905,7 +904,7 @@ class Owner(commands.Cog):
 
             await ctx.reply(
                 components=[
-                    disnake.ui.Button(label="Fechar Shell", custom_id="close_shell_result", emoji="♻️")
+                    disnake.ui.Button(label="Đóng Shell", custom_id="close_shell_result", emoji="♻️")
                 ],
                 mention_author=False,
                 **kwargs
@@ -913,19 +912,19 @@ class Owner(commands.Cog):
 
     @check_voice()
     @commands.cooldown(1, 15, commands.BucketType.guild)
-    @commands.command(description='inicializar um player no servidor.', aliases=["spawn", "sp", "spw", "smn"])
+    @commands.command(description='Khởi động một người chơi trên máy chủ.', aliases=["spawn", "sp", "spw", "smn"])
     async def summon(self, ctx: CustomContext):
 
         try:
             self.bot.music.players[ctx.guild.id]  # type ignore
-            raise GenericError("**Já há um player iniciado no servidor.**")
+            raise GenericError("**Đã có một người chơi bắt đầu trên máy chủ.**")
         except KeyError:
             pass
 
         node: wavelink.Node = self.bot.music.get_best_node()
 
         if not node:
-            raise GenericError("**Não há servidores de música disponível!**")
+            raise GenericError("**Không có máy chủ âm nhạc có sẵn!**")
 
         try:
             guild_data = ctx.guild_data
