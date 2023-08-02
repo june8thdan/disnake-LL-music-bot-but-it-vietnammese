@@ -1518,8 +1518,8 @@ class Music(commands.Cog):
             await player.process_next()
         elif force_play == "yes":
             player.set_command_log(
-                emoji="▶️",
-                text=f"{inter.author.mention} Anh ấy đã thêm bài hát hiện tại để chơi ngay lập tức."
+                emoji="<:verify:1134033164151566460>",
+                text=f"{inter.author.mention} đã thêm bài hát hiện tại để chơi ngay lập tức."
             )
             await player.track_end()
             await player.process_next()
@@ -1694,12 +1694,12 @@ class Music(commands.Cog):
         else:
 
             if isinstance(inter, disnake.MessageInteraction):
-                player.set_command_log(text=f"{inter.author.mention} bỏ qua bài hát.", emoji="⏭️")
+                player.set_command_log(text=f"{inter.author.mention} bỏ qua bài hát.", emoji="<:verify:1134033164151566460>")
                 await inter.response.defer()
                 interaction = inter
             else:
 
-                player.set_command_log(emoji="⏭️", text=f"{inter.author.mention} bỏ qua bài hát.")
+                player.set_command_log(emoji="<:verify:1134033164151566460>", text=f"{inter.author.mention} bỏ qua bài hát.")
 
                 embed = disnake.Embed(
                     color=self.bot.get_color(guild.me),
@@ -1754,7 +1754,7 @@ class Music(commands.Cog):
 
         if not len(player.queue) and (player.keep_connected or not len(player.played)):
             await player.seek(0)
-            await self.interaction_message(inter, "đã trở lại đầu bài hát.", emoji="⏪")
+            await self.interaction_message(inter, "đã trở lại đầu bài hát.", emoji="<:verify:1134033164151566460>")
             return
 
         if player.keep_connected:
@@ -1775,7 +1775,7 @@ class Music(commands.Cog):
 
         if isinstance(inter, disnake.MessageInteraction):
             interaction = inter
-            player.set_command_log(text=f"{inter.author.mention} trở lại với âm nhạc hiện tại.", emoji="⏮️")
+            player.set_command_log(text=f"{inter.author.mention} trở lại với âm nhạc hiện tại.", emoji="<:verify:1134033164151566460>")
             await inter.response.defer()
         else:
 
@@ -1785,10 +1785,10 @@ class Music(commands.Cog):
 
             txt = [
                 "trở lại với bài hát hiện tại.",
-                f"⏮️ **⠂{inter.author.mention} trở lại với bài hát:\n╰[`{fix_characters(t.title, 43)}`]({t.uri or t.search_uri})**"
+                f"<:verify:1134033164151566460> **⠂{inter.author.mention} trở lại với bài hát:\n╰[`{fix_characters(t.title, 43)}`]({t.uri or t.search_uri})**"
             ]
 
-            await self.interaction_message(inter, txt, emoji="⏮️", store_embed=True)
+            await self.interaction_message(inter, txt, emoji="<:verify:1134033164151566460>", store_embed=True)
 
         if player.loop == "current":
             player.loop = False
@@ -1943,9 +1943,9 @@ class Music(commands.Cog):
 
         await player.set_pause(True)
 
-        txt = ["tạm dừng âm nhạc.", f"⏸️ **⠂{inter.author.mention} đã tạm dừng bài hát.**"]
+        txt = ["tạm dừng âm nhạc.", f"<:verify:1134033164151566460> **⠂{inter.author.mention} đã tạm dừng bài hát.**"]
 
-        await self.interaction_message(inter, txt, rpc_update=True, emoji="⏸️")
+        await self.interaction_message(inter, txt, rpc_update=True, emoji="<:verify:1134033164151566460>")
 
     @is_dj()
     @has_source()
@@ -1976,8 +1976,8 @@ class Music(commands.Cog):
 
         await player.set_pause(False)
 
-        txt = ["tiếp tục âm nhạc.", f"▶️ **⠂{inter.author.mention} đã tiếp tục bài hát**"]
-        await self.interaction_message(inter, txt, rpc_update=True, emoji="▶️")
+        txt = ["tiếp tục âm nhạc.", f"<:verify:1134033164151566460> **⠂{inter.author.mention} đã tiếp tục bài hát**"]
+        await self.interaction_message(inter, txt, rpc_update=True, emoji="<:verify:1134033164151566460>")
 
     seek_cd = commands.CooldownMapping.from_cooldown(2, 10, commands.BucketType.member)
     seek_mc =commands.MaxConcurrency(1, per=commands.BucketType.member, wait=False)
@@ -2034,7 +2034,7 @@ class Music(commands.Cog):
 
         if milliseconds > player.position:
 
-            emoji = "⏩"
+            emoji = "<:verify:1134033164151566460>"
 
             txt = [
                 f"đã tua thời gian của bài hát đến `{time_format(milliseconds)}`",
@@ -2043,7 +2043,7 @@ class Music(commands.Cog):
 
         else:
 
-            emoji = "⏪"
+            emoji = "<:verify:1134033164151566460>"
 
             txt = [
                 f"Thời gian của bài hát đã trở lại: `{time_format(milliseconds)}`",
@@ -2200,17 +2200,17 @@ class Music(commands.Cog):
         if mode == 'off':
             mode = False
             player.current.info["extra"]["track_loops"] = 0
-            emoji = "⭕"
+            emoji = "<:AyakaCozy_mella:1135418504590393415>"
             txt = ['Vô hiệu hóa lặp lại.', f"{emoji} **⠂{inter.author.mention}Vô hiệu hóa lặp lại.**"]
 
         elif mode == "current":
             player.current.info["extra"]["track_loops"] = 0
-            emoji = "🔂"
+            emoji = "<:Play_With_Me:1128555926417330207>"
             txt = ["Đã kích hoạt lặp lại của bài hát hiện tại.",
                    f"{emoji} **⠂{inter.author.mention} Đã kích hoạt lặp lại của bài hát hiện tại.**"]
 
         else:  # queue
-            emoji = "🔁"
+            emoji = "<:Play_With_Me:1128555926417330207>"
             txt = ["đã kích hoạt lặp lại của dòng.", f"{emoji} **⠂{inter.author.mention} đã kích hoạt lặp lại của hàng đợi.**"]
 
         player.loop = mode
@@ -2244,11 +2244,11 @@ class Music(commands.Cog):
         txt = [
             f"xác định số lượng lặp lại của bài hát "
             f"[`{(fix_characters(player.current.title, 25))}`]({player.current.uri or player.current.search_uri}) para **{value}**.",
-            f"🔄 **⠂{inter.author.mention} xác định số lượng lặp lại bài hát là [{value}]:**\n"
+            f"<:Play_With_Me:1128555926417330207> **⠂{inter.author.mention} xác định số lần lặp lại bài hát là [{value}]:**\n"
             f"╰[`{player.current.title}`]({player.current.uri or player.current.search_uri})"
         ]
 
-        await self.interaction_message(inter, txt, rpc_update=True, emoji="🔄")
+        await self.interaction_message(inter, txt, rpc_update=True, emoji="<:verify:1134033164151566460>")
 
     remove_mc = commands.MaxConcurrency(1, per=commands.BucketType.guild, wait=False)
 
@@ -2442,11 +2442,11 @@ class Music(commands.Cog):
 
             txt = [
                 f"Chuyển bài hát [`{fix_characters(track.title, limit=25)}`]({track.uri or track.search_uri}) đến vị trí **[{position}]** trong hàng.",
-                f"↪️ **⠂{inter.author.mention} đã di chuyển một bài hát đến vị trí [{position}]:**\n"
+                f"<:verify:1134033164151566460> **⠂{inter.author.mention} đã di chuyển một bài hát đến vị trí [{position}]:**\n"
                 f"╰[`{fix_characters(track.title, limit=43)}`]({track.uri or track.search_uri})"
             ]
 
-            await self.interaction_message(inter, txt, emoji="↪️")
+            await self.interaction_message(inter, txt, emoji="<:verify:1134033164151566460>")
 
         else:
 
@@ -2456,7 +2456,7 @@ class Music(commands.Cog):
 
             embed = disnake.Embed(
                 color=self.bot.get_color(guild.me),
-                description=f"↪️ **⠂{inter.author.mention} di chuyển [{i_size}] Bài hát có tên \"{query}\" đến " \
+                description=f"<:verify:1134033164151566460> **⠂{inter.author.mention} di chuyển [{i_size}] Bài hát có tên \"{query}\" đến " \
                             f"vị trí [{position_text}] trong hàng:**\n\n{tracklist}"
             )
 
@@ -2473,7 +2473,7 @@ class Music(commands.Cog):
             if ephemeral:
                 player.set_command_log(
                     text=f"{inter.author.mention} di chuyển **[{i_size}]** Bài hát có tên **{fix_characters(query, 25)}"
-                         f"** đến vị trí **[{position_text}]** trong hàng.", emoji="↪️")
+                         f"** đến vị trí **[{position_text}]** trong hàng.", emoji="<:verify:1134033164151566460>")
 
             try:
                 if bot.user.id != self.bot.user.id:
@@ -2540,10 +2540,10 @@ class Music(commands.Cog):
 
         txt = [
             f"Xoay dòng sang âm nhạc [`{(fix_characters(track.title, limit=25))}`]({track.uri or track.search_uri}).",
-            f"🔃 **⠂{inter.author.mention} đã Xoay dòng sang âm nhạc:**\n╰[`{track.title}`]({track.uri or track.search_uri})."
+            f"<:verify:1134033164151566460> **⠂{inter.author.mention} đã Xoay dòng sang âm nhạc:**\n╰[`{track.title}`]({track.uri or track.search_uri})."
         ]
 
-        await self.interaction_message(inter, txt, emoji="🔃")
+        await self.interaction_message(inter, txt, emoji="<:verify:1134033164151566460>")
 
         await player.update_message()
 
@@ -2597,14 +2597,14 @@ class Music(commands.Cog):
 
         await inter.response.defer(ephemeral=True)
 
-        thread = await player.message.create_thread(name=f"{bot.user.name} temp. song-request", auto_archive_duration=10080)
+        thread = await player.message.create_thread(name=f"Kênh yêu cầu nhạc của {bot.user.name}", auto_archive_duration=10080)
 
         txt = [
             "Đã kích hoạt hệ thống trò chuyện tạm thời/chủ đề cho yêu cầu âm nhạc.",
-            f"💬 **⠂{inter.author.mention} Đã tạo [Chủ đề/cuộc trò chuyện]({thread.jump_url}) tạm thời cho yêu cầu âm nhạc.**"
+            f"<:verify:1134033164151566460> **⠂{inter.author.mention} Đã tạo [Chủ đề/cuộc trò chuyện]({thread.jump_url}) tạm thời cho yêu cầu âm nhạc.**"
         ]
 
-        await self.interaction_message(inter, txt, emoji="💬", defered=True, force=True)
+        await self.interaction_message(inter, txt, emoji="<:verify:1134033164151566460>", defered=True, force=True)
 
     @rotate.autocomplete("nome")
     @move.autocomplete("nome")
@@ -2839,13 +2839,13 @@ class Music(commands.Cog):
         player.dj.add(user.id)
 
         text = [f"thêm {user.mention} vào danh sách DJ.",
-                f"🎧 **⠂{inter.author.mention} đã thêm {user.mention} Vào danh sách DJ**"]
+                f"<:Play_With_Me:1128555926417330207> **⠂{inter.author.mention} đã thêm {user.mention} Vào danh sách DJ**"]
 
         if (player.static and channel == player.text_channel) or isinstance(inter.application_command,
                                                                             commands.InvokableApplicationCommand):
             await inter.send(f"{user.mention} Đã thêm vào danh sách của DJ!{player.controller_link}")
 
-        await self.interaction_message(inter, txt=text, emoji="🎧")
+        await self.interaction_message(inter, txt=text, emoji="<:Play_With_Me:1128555926417330207>")
 
     @is_dj()
     @has_player()
@@ -2886,13 +2886,13 @@ class Music(commands.Cog):
             player.dj.remove(user.id)
 
         text = [f"LOẠI BỎ {user.mention} khỏi danh sách DJ's.",
-                f"🎧 **⠂{inter.author.mention} LOẠI BỎ {user.mention} khỏi danh sách DJ's.**"]
+                f"<:Pleased:1128555476620169317> **⠂{inter.author.mention} LOẠI BỎ {user.mention} khỏi danh sách DJ's.**"]
 
         if (player.static and channel == player.text_channel) or isinstance(inter.application_command,
                                                                             commands.InvokableApplicationCommand):
             await inter.send(f"{user.mention} Được thêm vào danh sách của DJ's!{player.controller_link}")
 
-        await self.interaction_message(inter, txt=text, emoji="🎧")
+        await self.interaction_message(inter, txt=text, emoji="<:Pleased:1128555476620169317>")
 
     @is_dj()
     @has_player()
@@ -2929,7 +2929,7 @@ class Music(commands.Cog):
 
             embed = disnake.Embed(
                 color=self.bot.get_color(guild.me),
-                description=f"🛑 **⠂{inter.author.mention} đã dừng người chơi.**"
+                description=f"<:Pleased:1128555476620169317> **⠂{inter.author.mention} đã dừng người chơi.**"
             )
 
             try:
@@ -3500,7 +3500,7 @@ class Music(commands.Cog):
 
         player.autoplay = not player.autoplay
 
-        msg = ["kích hoạt", "🔄"] if player.autoplay else ["vô hiệu hóa", "❌"]
+        msg = ["kích hoạt", "<:KleeParty:1136214064067006565>"] if player.autoplay else ["vô hiệu hóa", "<:Pleased:1128555476620169317>"]
 
         text = [f"{msg[0]}  Tự động phát.", f"{msg[1]} **⠂{inter.author.mention} {msg[0]}  Tự động phát.**"]
 
@@ -3985,7 +3985,7 @@ class Music(commands.Cog):
                     await is_dj().predicate(interaction)
                     player.mini_queue_enabled = not player.mini_queue_enabled
                     player.set_command_log(
-                        emoji="📑",
+                        emoji="<:verify:1134033164151566460>",
                         text=f"{interaction.author.mention} {'kích hoạt' if player.mini_queue_enabled else 'vô hiệu hóa'} "
                              f"Danh sách hàng chờ mini."
                     )
