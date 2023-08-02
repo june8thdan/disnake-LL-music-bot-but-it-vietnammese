@@ -119,7 +119,7 @@ class Music(commands.Cog):
 
         await self.update_cache()
 
-        await ctx.send("As músicas do link foram adicionadas com sucesso em cache.", delete_after=30)
+        await ctx.send("Các bài hát liên kết đã được thêm thành công trong bộ nhớ cache.", delete_after=30)
 
     @commands.is_owner()
     @commands.cooldown(1, 300, commands.BucketType.default)
@@ -137,9 +137,9 @@ class Music(commands.Cog):
 
         try:
             if not self.bot.pool.playlist_cache:
-                raise GenericError("**Seu cache de playlist está vazio...**")
+                raise GenericError("**Bộ nhớ cache danh sách phát của bạn trống...**")
         except KeyError:
-            raise GenericError(f"**Você ainda não usou o comando: {ctx.prefix}{self.addcache.name}**")
+            raise GenericError(f"**Bạn chưa sử dụng lệnh: {ctx.prefix}{self.addcache.name}**")
 
         msg = None
 
@@ -163,7 +163,7 @@ class Music(commands.Cog):
                     pass
 
             if not tracks:
-                txt += f"[`❌ Falha`]({url})\n"
+                txt += f"[`❌ thất bại`]({url})\n"
 
             else:
 
@@ -187,7 +187,7 @@ class Music(commands.Cog):
 
             embed = disnake.Embed(
                 description=txt, color=self.bot.get_color(ctx.guild.me),
-                title=f"Playlist verificadas: {counter}/{amount}"
+                title=f"Danh sách phát được xác minh: {counter}/{amount}"
             )
 
             if not msg:
@@ -204,11 +204,11 @@ class Music(commands.Cog):
         try:
             del self.bot.pool.playlist_cache[url]
         except KeyError:
-            raise GenericError("**Não há itens salvo em cache com a url informada...**")
+            raise GenericError("**Không có mục nào được lưu trong bộ nhớ cache với URL thông tin...**")
 
         await self.update_cache()
 
-        await ctx.send("As músicas do link foram removidas com sucesso do cache.", delete_after=30)
+        await ctx.send("Các bài hát liên kết đã được xóa thành công khỏi bộ đệm.", delete_after=30)
 
     @commands.is_owner()
     @commands.command(hidden=True, aliases=["cc"])
@@ -217,11 +217,11 @@ class Music(commands.Cog):
         try:
             self.bot.pool.playlist_cache.clear()
         except KeyError:
-            raise GenericError("**Você não possui links de playlists salva em cache...**")
+            raise GenericError("**Bạn đã không lưu các liên kết danh sách phát trong bộ đệm...**")
 
         await self.update_cache()
 
-        await ctx.send("O cache de playlist foi limpo com sucesso.", delete_after=30)
+        await ctx.send("Bộ đệm danh sách phát đã được làm sạch thành công.", delete_after=30)
 
     @commands.is_owner()
     @commands.command(hidden=True, aliases=["ec"])
@@ -240,7 +240,7 @@ class Music(commands.Cog):
 
         await self.update_cache()
 
-        await ctx.send("O arquivo de cache foi importado com sucesso!", delete_after=30)
+        await ctx.send("Tệp bộ nhớ cache đã được nhập thành công!", delete_after=30)
 
     stage_cd = commands.CooldownMapping.from_cooldown(2, 45, commands.BucketType.guild)
     stage_mc = commands.MaxConcurrency(1, per=commands.BucketType.guild, wait=False)
@@ -282,7 +282,7 @@ class Music(commands.Cog):
             raise GenericError("**Bạn phải ở trên một kênh sân khấu để kích hoạt/vô hiệu hóa hệ thống này.**")
 
         if not guild.me.guild_permissions.manage_guild:
-            raise GenericError(f"{bot.user.mention} không có sự cho phép của: **{perms_translations['manage_guild']}.**")
+            raise GenericError(f"{bot.user.mention} không có  cho phép của: **{perms_translations['manage_guild']}.**")
 
         player: LavalinkPlayer = bot.music.players[inter.guild_id]
 
@@ -343,10 +343,10 @@ class Music(commands.Cog):
     async def stage_announce_autocomplete(self, inter: disnake.Interaction, query: str):
 
         return [
-            "Tocando: {track.title} | {track.author}",
-            "{track.title} | Pedido por: {requester.name}#{requester.tag}",
-            "Rádio 24/7 | {track.title}",
-            "{track.title} | Playlist: {track.playlist}",
+            "Đang chơi: {track.title} | {track.author}",
+            "{track.title} | Được yêu cầu bởi: {requester.name}#{requester.tag}",
+            "Đài 24/7 | {track.title}",
+            "{track.title} | Danh sách phát: {track.playlist}",
         ]
 
     play_cd = commands.CooldownMapping.from_cooldown(3, 12, commands.BucketType.member)
@@ -1986,12 +1986,13 @@ class Music(commands.Cog):
     @is_dj()
     @has_source()
     @check_voice()
-    @pool_command(name="seek", aliases=["sk"], description="Tua bài hát đến một khoảng thời gian nhất định.",
-                  only_voiced=True, cooldown=seek_cd, max_concurrency=seek_mc,
-                  usage="{prefix}{cmd} [tempo]\n"
-                        "Ex 1: {prefix}{cmd} 10 (tempo 0:10)\n"
-                        "Ex 2: {prefix}{cmd} 1:45 (tempo 1:45)")
-    async def seek_legacy(self, ctx: CustomContext, *, position: str):
+    @pool_command(name="seek", aliases=["sk"], description="Tiến bộ/tiếp tục âm nhạc trong một thời gian cụ thể.",
+                  only_voiced=True, cooldown=seek_cd, max_concurrency=seek_mc)
+    async def seek_legacy(self, ctx: CustomContext, *, position: str = None):
+
+        if not position:
+            raise GenericError("**Bạn đã không nói thời gian để di chuyển/quay trở lại (ví dụ: 1:55 | 33 | 0:45).**")
+
         await self.seek.callback(self=self, inter=ctx, position=position)
 
     @check_stage_topic()
@@ -1999,7 +2000,7 @@ class Music(commands.Cog):
     @has_source()
     @check_voice()
     @commands.slash_command(
-        description=f"{desc_prefix}Tua bài hát đến một khoảng thời gian nhất định.",
+        description=f"{desc_prefix}Tiến bộ/tiếp tục âm nhạc trong một thời gian cụ thể.",
         extras={"only_voiced": True}, cooldown=seek_cd, max_concurrency=seek_mc
     )
     async def seek(
@@ -2036,8 +2037,8 @@ class Music(commands.Cog):
             emoji = "⏩"
 
             txt = [
-                f"avançou o tempo da música para: `{time_format(milliseconds)}`",
-                f"{emoji} **⠂{inter.author.mention} avançou o tempo da música para:** `{time_format(milliseconds)}`"
+                f"đã tua thời gian của bài hát đến `{time_format(milliseconds)}`",
+                f"{emoji} **⠂{inter.author.mention} đã tua thời gian của bài hát đển:** `{time_format(milliseconds)}`"
             ]
 
         else:
@@ -2045,8 +2046,8 @@ class Music(commands.Cog):
             emoji = "⏪"
 
             txt = [
-                f"voltou o tempo da música para: `{time_format(milliseconds)}`",
-                f"{emoji} **⠂{inter.author.mention} voltou o tempo da música para:** `{time_format(milliseconds)}`"
+                f"Thời gian của bài hát đã trở lại: `{time_format(milliseconds)}`",
+                f"{emoji} **⠂{inter.author.mention} đã đưa thời gian của bài hát trở lại:** `{time_format(milliseconds)}`"
             ]
 
         await player.seek(milliseconds)
@@ -2102,15 +2103,15 @@ class Music(commands.Cog):
     @has_source()
     @check_voice()
     @pool_command(
-        description=f"Selecionar modo de repetição entre: música atual / fila / desativar / quantidade (usando números).",
+        description=f"Chọn Chế độ lặp lại giữa: Âm nhạc hiện tại / Line / Tắt / Số lượng (sử dụng số).",
         only_voiced=True, cooldown=loop_cd, max_concurrency=loop_mc,
-        usage="{prefix}{cmd} <quantidade|modo>\nEx 1: {prefix}{cmd} 1\nEx 2: {prefix}{cmd} queue")
+        usage="{prefix}{cmd} <Số lượng | Chế độ>\nVí dụ: 1: {prefix}{cmd} 1\nVí dụ 2: {prefix}{cmd} Hàng")
     async def loop(self, ctx: CustomContext, mode: str = None):
 
         if not mode:
 
             embed = disnake.Embed(
-                description="**Selecione um modo de repetição:**",
+                description="**Chọn chế độ lặp lại:**",
                 color=self.bot.get_color(ctx.guild.me)
             )
 
@@ -2119,12 +2120,12 @@ class Music(commands.Cog):
                 embed=embed,
                 components=[
                     disnake.ui.Select(
-                        placeholder="Selecione uma opção:",
+                        placeholder="Chọn một tùy chọn:",
                         custom_id="loop_mode_legacy",
                         options=[
-                            disnake.SelectOption(label="Música Atual", value="current"),
-                            disnake.SelectOption(label="Fila do player", value="queue"),
-                            disnake.SelectOption(label="Desativar repetição", value="off")
+                            disnake.SelectOption(label="Bài hát hiện tại", value="current"),
+                            disnake.SelectOption(label="Hàng đợi", value="queue"),
+                            disnake.SelectOption(label="Vô hiệu hóa", value="off")
                         ]
                     )
                 ]
@@ -2136,7 +2137,7 @@ class Music(commands.Cog):
                     check=lambda i: i.message.id == msg.id and i.author == ctx.author
                 )
             except asyncio.TimeoutError:
-                embed.description = "Tempo de seleção esgotado!"
+                embed.description = "Đã hết thời gian!"
                 try:
                     await msg.edit(embed=embed, view=None)
                 except:
@@ -2149,14 +2150,14 @@ class Music(commands.Cog):
         if mode.isdigit():
 
             if len(mode) > 2 or int(mode) > 10:
-                raise GenericError(f"**Quantidade inválida: {mode}**\n"
-                                   "`Quantidade máxima permitida: 10`")
+                raise GenericError(f"**Số lượng không hợp lệ: {mode}**\n"
+                                   "`Số lượng cho phép tối đa: 10`")
 
             await self.loop_amount.callback(self=self, inter=ctx, value=int(mode))
             return
 
         if mode not in ('current', 'queue', 'off'):
-            raise GenericError("Modo inválido! escolha entre: current/queue/off")
+            raise GenericError("Cách không hợp lệ! Chọn giữa: Hiện tại/Hàng đợi/TẮT")
 
         await self.loop_mode.callback(self=self, inter=ctx, mode=mode)
 
@@ -2164,14 +2165,14 @@ class Music(commands.Cog):
     @has_source()
     @check_voice()
     @commands.slash_command(
-        description=f"{desc_prefix}Selecionar modo de repetição entre: atual / fila ou desativar.",
+        description=f"{desc_prefix}Chọn Chế độ lặp lại giữa: bài hát hiện tại / Hàng đợi hoặc Tắt.",
         extras={"only_voiced": True}, cooldown=loop_cd, max_concurrency=loop_mc
     )
     async def loop_mode(
             self,
             inter: disnake.AppCmdInter,
             mode: str = commands.Param(
-                name="modo",
+                name="mode",
                 choices=[
                     disnake.OptionChoice(
                         disnake.Localized("Current", data={disnake.Locale.pt_BR: "Música Atual"}), "current"
@@ -2194,23 +2195,23 @@ class Music(commands.Cog):
         player: LavalinkPlayer = bot.music.players[inter.guild_id]
 
         if mode == player.loop:
-            raise GenericError("**O modo de repetição selecionado já está ativo...**")
+            raise GenericError("**Chế độ lặp lại được chọn đã hoạt động...**")
 
         if mode == 'off':
             mode = False
             player.current.info["extra"]["track_loops"] = 0
             emoji = "⭕"
-            txt = ['desativou a repetição.', f"{emoji} **⠂{inter.author.mention}desativou a repetição.**"]
+            txt = ['Vô hiệu hóa lặp lại.', f"{emoji} **⠂{inter.author.mention}Vô hiệu hóa lặp lại.**"]
 
         elif mode == "current":
             player.current.info["extra"]["track_loops"] = 0
             emoji = "🔂"
-            txt = ["ativou a repetição da música atual.",
-                   f"{emoji} **⠂{inter.author.mention} ativou a repetição da música atual.**"]
+            txt = ["Đã kích hoạt lặp lại của bài hát hiện tại.",
+                   f"{emoji} **⠂{inter.author.mention} Đã kích hoạt lặp lại của bài hát hiện tại.**"]
 
         else:  # queue
             emoji = "🔁"
-            txt = ["ativou a repetição da fila.", f"{emoji} **⠂{inter.author.mention} ativou a repetição da fila.**"]
+            txt = ["đã kích hoạt lặp lại của dòng.", f"{emoji} **⠂{inter.author.mention} đã kích hoạt lặp lại của hàng đợi.**"]
 
         player.loop = mode
 
@@ -2222,13 +2223,13 @@ class Music(commands.Cog):
     @has_source()
     @check_voice()
     @commands.slash_command(
-        description=f"{desc_prefix}Definir quantidade de repetições da música atual.",
+        description=f"{desc_prefix}Xác định số lượng lặp lại của âm nhạc hiện tại.",
         extras={"only_voiced": True}, cooldown=loop_cd, max_concurrency=loop_mc
     )
     async def loop_amount(
             self,
             inter: disnake.AppCmdInter,
-            value: int = commands.Param(name="valor", description="número de repetições.")
+            value: int = commands.Param(name="valor", description="Số lần lặp lại.")
     ):
 
         try:
@@ -2241,9 +2242,9 @@ class Music(commands.Cog):
         player.current.info["extra"]["track_loops"] = value
 
         txt = [
-            f"definiu a quantidade de repetições da música "
+            f"xác định số lượng lặp lại của bài hát "
             f"[`{(fix_characters(player.current.title, 25))}`]({player.current.uri or player.current.search_uri}) para **{value}**.",
-            f"🔄 **⠂{inter.author.mention} definiu a quantidade de repetições da música para [{value}]:**\n"
+            f"🔄 **⠂{inter.author.mention} xác định số lượng lặp lại bài hát là [{value}]:**\n"
             f"╰[`{player.current.title}`]({player.current.uri or player.current.search_uri})"
         ]
 
@@ -2254,7 +2255,7 @@ class Music(commands.Cog):
     @is_dj()
     @has_player()
     @check_voice()
-    @pool_command(name="remove", aliases=["r", "del"], description="Remover uma música específica da fila.",
+    @pool_command(name="remove", aliases=["r", "del"], description="Hủy bỏ một dòng cụ thể khỏi dòng.",
                   only_voiced=True, max_concurrency=remove_mc, extras={"flags": case_sensitive_args},
                   usage="{prefix}{cmd} [nome]\nEx: {prefix}{cmd} sekai")
     async def remove_legacy(self, ctx: CustomContext, *, flags: str = ""):
@@ -2262,7 +2263,7 @@ class Music(commands.Cog):
         args, unknown = ctx.command.extras['flags'].parse_known_args(flags.split())
 
         if not unknown:
-            raise GenericError("**Você não adicionou o nome da música.**")
+            raise GenericError("**Bạn đã không thêm tên của bài hát.**")
 
         await self.remove.callback(self=self, inter=ctx, query=" ".join(unknown), case_sensitive=args.casesensitive)
 
@@ -2270,7 +2271,7 @@ class Music(commands.Cog):
     @has_player()
     @check_voice()
     @commands.slash_command(
-        description=f"{desc_prefix}Remover uma música específica da fila.",
+        description=f"{desc_prefix}Xóa một dòng cụ thể khỏi hàng đợi.",
         extras={"only_voiced": True}, max_concurrency=remove_mc
     )
     async def remove(
@@ -2279,7 +2280,7 @@ class Music(commands.Cog):
             query: str = commands.Param(name="nome", description="Nome da música completo."),
             case_sensitive: bool = commands.Param(
                 name="nome_exato", default=False,
-                description="Buscar por músicas com letra exatas ao invés de buscar palavra por palavra no nome da música",
+                description="Tìm kiếm âm nhạc với lời bài hát chính xác thay vì tìm kiếm từng từ trong tên của âm nhạc",
 
             )
     ):
@@ -2292,7 +2293,7 @@ class Music(commands.Cog):
         try:
             index = queue_track_index(inter, bot, query, case_sensitive=case_sensitive)[0][0]
         except IndexError:
-            raise GenericError(f"**Não há músicas na fila com o nome: {query}**")
+            raise GenericError(f"**Không có bài hát nào phù hợp với tên: {query}**")
 
         player: LavalinkPlayer = bot.music.players[inter.guild_id]
 
@@ -2301,8 +2302,8 @@ class Music(commands.Cog):
         player.queue.remove(track)
 
         txt = [
-            f"removeu a música [`{(fix_characters(track.title, 25))}`]({track.uri or track.search_uri}) da fila.",
-            f"♻️ **⠂{inter.author.mention} removeu a música da fila:**\n╰[`{track.title}`]({track.uri or track.search_uri})"
+            f"loại bỏ âm nhạc [`{(fix_characters(track.title, 25))}`]({track.uri or track.search_uri}) khỏi hàng.",
+            f"♻️ **⠂{inter.author.mention} Đã loại bỏ âm nhạc khỏi dòng:**\n╰[`{track.title}`]({track.uri or track.search_uri})"
         ]
 
         await self.interaction_message(inter, txt, emoji="♻️")
@@ -2315,7 +2316,7 @@ class Music(commands.Cog):
     @has_player()
     @check_voice()
     @pool_command(name="readd", aliases=["readicionar", "rdd"], only_voiced=True, cooldown=queue_manipulation_cd,
-                  max_concurrency=remove_mc, description="Readicionar as músicas tocadas na fila.")
+                  max_concurrency=remove_mc, description="Đọc các bài hát được chơi trong hàng.")
     async def readd_legacy(self, ctx: CustomContext):
         await self.readd_songs.callback(self=self, inter=ctx)
 
@@ -2323,7 +2324,7 @@ class Music(commands.Cog):
     @has_player()
     @check_voice()
     @commands.slash_command(
-        description=f"{desc_prefix}Readicionar as músicas tocadas na fila.",
+        description=f"{desc_prefix}Đọc các bài hát được chơi trong hàng.",
         extras={"only_voiced": True}, cooldown=queue_manipulation_cd, max_concurrency=remove_mc
     )
     async def readd_songs(self, inter: disnake.AppCmdInter):
@@ -2335,9 +2336,8 @@ class Music(commands.Cog):
 
         player: LavalinkPlayer = bot.music.players[inter.guild_id]
 
-        if not player.played and not player.failed_tracks:
-            raise GenericError("**Não há músicas tocadas.**")
-
+        if not player.played:
+            raise GenericError("**Không có bài hát nào được chơi.**")
         qsize = len(player.played) + len(player.failed_tracks)
 
         player.played.reverse()
@@ -2348,8 +2348,8 @@ class Music(commands.Cog):
         player.failed_tracks.clear()
 
         txt = [
-            f"readicionou [{qsize}] música(s) tocada(s) na fila.",
-            f"🎶 **⠂{inter.author.mention} readicionou {qsize} música(s) na fila.**"
+            f"Thêm [{qsize}] Bài hát đã phát vào lại hàng chờ.",
+            f"🎶 **⠂{inter.author.mention} đã thêm {qsize} bài hát vào lại hàng đợi.**"
         ]
 
         await self.interaction_message(inter, txt, emoji="🎶")
@@ -2363,22 +2363,20 @@ class Music(commands.Cog):
 
     move_args = CommandArgparse()
     move_args.add_argument('-count', '-counter', '-amount', '-c', '-max', type=int, default=None,
-                           help="Especificar uma quantidade de músicas para mover com o nome especificado.\nEx: -amount 5")
-    move_args.add_argument('-casesensitive', '-cs',  action='store_true',
-                           help="Buscar por músicas com letra exatas ao invés de buscar palavra por palavra no nome "
-                                "da música")
-    move_args.add_argument('-position', '-pos', help="Especificar uma posição de destino (isso serve pra situações no qual o nome pra busca começe com número).\nEx: -pos 1", type=int, default=None)
+                           help="Chỉ định một số bài hát để di chuyển với tên được chỉ định.")
+    move_args.add_argument('-casesensitive', '-cs', '-exactmatch', '-exact', action='store_true',
+                           help="Tìm kiếm lời bài hát chính xác thay vì tìm kiếm từng từ trong tên "
+                                "từ âm nhạc")
+    move_args.add_argument('-position', '-pos', help="Chỉ định vị trí đích", type=int, default=None)
 
     @is_dj()
     @has_player()
     @check_voice()
     @pool_command(name="move", aliases=["mv", "mover"], only_voiced=True, max_concurrency=remove_mc,
-                  description="Mover músicas pra uma posição especificada da fila.", extras={"flags": move_args},
-                  usage="{prefix}{cmd} <posição(nº)> [nome]\nEx 1: {prefix}{cmd} 2 sekai\nEx 2: {prefix}{cmd} sekai\n"
-                        "(Nota: caso não seja especificado uma posição via arg ou flag, a música será movida pra posição 1)")
+                  description="Di chuyển một bài hát đến vị trí được chỉ định trong hàng đợi.")
     async def move_legacy(self, ctx: CustomContext, position: Optional[int] = None, *, flags: str = ""):
 
-        args, unknown = ctx.command.extras['flags'].parse_known_args(flags.split())
+        args, unknown = self.move_args.parse_known_args(args=flags.split())
 
         if args.position:
             if position:
@@ -2386,10 +2384,10 @@ class Music(commands.Cog):
             position = args.position
 
         elif not position:
-            raise GenericError("**Você não informou uma posição da fila.**")
+            raise GenericError("**Bạn đã không báo cáo một vị trí trong hàng đợi.**")
 
         if not unknown:
-            raise GenericError("**Você não adicionou o nome da música.**")
+            raise GenericError("**Bạn đã không thêm tên của bài hát.**")
 
         await self.move.callback(self=self, inter=ctx, position=position, query=" ".join(unknown), match_count=args.count or 1, case_sensitive=args.casesensitive)
 
@@ -2397,28 +2395,28 @@ class Music(commands.Cog):
     @has_player()
     @check_voice()
     @commands.slash_command(
-        description=f"{desc_prefix}Mover uma música para a posição especificada da fila.",
+        description=f"{desc_prefix}Di chuyển một bài hát đến vị trí được chỉ định trong hàng đợi.",
         extras={"only_voiced": True}, max_concurrency=remove_mc
     )
     async def move(
             self,
             inter: disnake.AppCmdInter,
-            query: str = commands.Param(name="nome", description="Nome da música."),
-            position: int = commands.Param(name="posição", description="Posição de destino na fila.", default=1),
+            query: str = commands.Param(name="nome", description="Tên của bài hát."),
+            position: int = commands.Param(name="position", description="Vị trí đích theo dòng.", default=1),
             match_count: int = commands.Param(
                 name="quantidade",
-                description="Especificar uma quantidade de músicas para mover com o nome especificado.",
+                description="Chỉ định một số bài hát để di chuyển với tên được chỉ định.",
                 default=1, min_value=1, max_value=999,
             ),
             case_sensitive: bool = commands.Param(
                 name="nome_exato", default=False,
-                description="Buscar por músicas por termo exato ao invés de buscar palavra por palavra no nome da música",
+                description="Tìm kiếm âm nhạc với lời bài hát chính xác thay vì tìm kiếm từng từ trong tên của âm nhạc",
 
             )
     ):
 
         if position < 1:
-            raise GenericError(f"**Você usou uma posição inválida: {position}**.")
+            raise GenericError(f"**Bạn đã sử dụng một vị trí không hợp lệ: {position}**.")
 
         try:
             bot = inter.music_bot
@@ -2432,7 +2430,7 @@ class Music(commands.Cog):
         indexes = queue_track_index(inter, bot, query, match_count=match_count, case_sensitive=case_sensitive)
 
         if not indexes:
-            raise GenericError(f"**Não há músicas na fila com o nome: {query}**")
+            raise GenericError(f"**Không có bài hát nào phù hợp với tên: {query}**")
 
         for index, track in reversed(indexes):
             player.queue.remove(track)
@@ -2443,8 +2441,8 @@ class Music(commands.Cog):
             track = indexes[0][1]
 
             txt = [
-                f"moveu a música [`{fix_characters(track.title, limit=25)}`]({track.uri or track.search_uri}) para a posição **[{position}]** da fila.",
-                f"↪️ **⠂{inter.author.mention} moveu uma música para a posição [{position}]:**\n"
+                f"Chuyển bài hát [`{fix_characters(track.title, limit=25)}`]({track.uri or track.search_uri}) đến vị trí **[{position}]** trong hàng.",
+                f"↪️ **⠂{inter.author.mention} đã di chuyển một bài hát đến vị trí [{position}]:**\n"
                 f"╰[`{fix_characters(track.title, limit=43)}`]({track.uri or track.search_uri})"
             ]
 
@@ -2458,14 +2456,14 @@ class Music(commands.Cog):
 
             embed = disnake.Embed(
                 color=self.bot.get_color(guild.me),
-                description=f"↪️ **⠂{inter.author.mention} moveu [{i_size}] músicas com o nome \"{query}\" para " \
-                            f"a posição [{position_text}] da fila:**\n\n{tracklist}"
+                description=f"↪️ **⠂{inter.author.mention} di chuyển [{i_size}] Bài hát có tên \"{query}\" đến " \
+                            f"vị trí [{position_text}] trong hàng:**\n\n{tracklist}"
             )
 
             embed.set_thumbnail(url=indexes[0][1].thumb)
 
             if i_size > 20:
-                embed.description += f"\n\n`E mais {i_size - 20} música(s).`"
+                embed.description += f"\n\n`Và hơn thế nữa {i_size - 20} Các bài hát.`"
 
             if player.controller_link:
                 embed.description += f" `|`{player.controller_link}"
@@ -2474,12 +2472,12 @@ class Music(commands.Cog):
 
             if ephemeral:
                 player.set_command_log(
-                    text=f"{inter.author.mention} moveu **[{i_size}]** músicas com o nome **{fix_characters(query, 25)}"
-                         f"** para a posição **[{position_text}]** da fila.", emoji="↪️")
+                    text=f"{inter.author.mention} di chuyển **[{i_size}]** Bài hát có tên **{fix_characters(query, 25)}"
+                         f"** đến vị trí **[{position_text}]** trong hàng.", emoji="↪️")
 
             try:
                 if bot.user.id != self.bot.user.id:
-                    embed.set_footer(text=f"Via: {bot.user.display_name}", icon_url=bot.user.display_avatar.url)
+                    embed.set_footer(text=f"Sử dụng {bot.user.display_name}", icon_url=bot.user.display_avatar.url)
             except AttributeError:
                 pass
 
@@ -2487,19 +2485,18 @@ class Music(commands.Cog):
 
         await player.update_message()
 
-    @is_dj()
+    is_dj()
     @has_player()
     @check_voice()
     @pool_command(name="rotate", aliases=["rt", "rotacionar"], only_voiced=True,
-                  description="Rotacionar a fila para a música especificada.",
-                  cooldown=queue_manipulation_cd, max_concurrency=remove_mc, extras={"flags": case_sensitive_args},
-                  usage="{prefix}{cmd} [nome]\nEx: {prefix}{cmd} sekai")
+                  description="Xoay hàng đợi cho nhạc được chỉ định.",
+                  cooldown=queue_manipulation_cd, max_concurrency=remove_mc)
     async def rotate_legacy(self, ctx: CustomContext, *, flags: str = ""):
 
-        args, unknown = ctx.command.extras['flags'].parse_known_args(flags.split())
+        args, unknown = self.case_sensitive_args.parse_known_args(flags.split())
 
         if not unknown:
-            raise GenericError("**Você não adicionou o nome da música.**")
+            raise GenericError("**Bạn đã không thêm tên của bài hát.**")
 
         await self.rotate.callback(self=self, inter=ctx, query=" ".join(unknown), case_sensitive=args.casesensitive)
 
@@ -2507,16 +2504,16 @@ class Music(commands.Cog):
     @has_player()
     @check_voice()
     @commands.slash_command(
-        description=f"{desc_prefix}Rotacionar a fila para a música especificada.",
+        description=f"{desc_prefix}Xoay hàng đợi cho nhạc được chỉ định.",
         extras={"only_voiced": True}, cooldown=queue_manipulation_cd, max_concurrency=remove_mc
     )
     async def rotate(
             self,
             inter: disnake.AppCmdInter,
-            query: str = commands.Param(name="nome", description="Nome da música completo."),
+            query: str = commands.Param(name="nome", description="Hoàn thành tên âm nhạc."),
             case_sensitive: bool = commands.Param(
                 name="nome_exato", default=False,
-                description="Buscar por músicas com letra exatas ao invés de buscar palavra por palavra no nome da música",
+                description="Tìm kiếm âm nhạc với lời bài hát chính xác thay vì tìm kiếm từng từ trong tên của âm nhạc",
             )
     ):
 
@@ -2528,7 +2525,7 @@ class Music(commands.Cog):
         index = queue_track_index(inter, bot, query, case_sensitive=case_sensitive)
 
         if not index:
-            raise GenericError(f"**Não há músicas na fila com o nome: {query}**")
+            raise GenericError(f"**Không có bài hát nào phù hợp với tên: {query}**")
 
         index = index[0][0]
 
@@ -2537,13 +2534,13 @@ class Music(commands.Cog):
         track = player.queue[index]
 
         if index <= 0:
-            raise GenericError(f"**A música **[`{track.title}`]({track.uri or track.search_uri}) já é a próxima da fila.")
+            raise GenericError(f"**Đến âm nhạc **[`{track.title}`]({track.uri or track.search_uri}) Nó đã là dòng tiếp theo.")
 
         player.queue.rotate(0 - (index))
 
         txt = [
-            f"rotacionou a fila para a música [`{(fix_characters(track.title, limit=25))}`]({track.uri or track.search_uri}).",
-            f"🔃 **⠂{inter.author.mention} rotacionou a fila para a música:**\n╰[`{track.title}`]({track.uri or track.search_uri})."
+            f"Xoay dòng sang âm nhạc [`{(fix_characters(track.title, limit=25))}`]({track.uri or track.search_uri}).",
+            f"🔃 **⠂{inter.author.mention} đã Xoay dòng sang âm nhạc:**\n╰[`{track.title}`]({track.uri or track.search_uri})."
         ]
 
         await self.interaction_message(inter, txt, emoji="🔃")
@@ -2557,7 +2554,7 @@ class Music(commands.Cog):
     @check_voice()
     @commands.bot_has_guild_permissions(manage_threads=True)
     @pool_command(name="songrequesttread", aliases=["songrequest", "srt"], only_voiced=True,
-                  description="Criar uma thread/conversa temporária para song-request (pedido de música)")
+                  description="Tạo một cuộc trò chuyện chủ đề/tạm thời cho các yêu cầu bài hát (yêu cầu âm nhạc)")
     async def song_request_thread_legacy(self, ctx: CustomContext):
 
         await self.song_request_thread.callback(self=self, inter=ctx)
@@ -2567,7 +2564,7 @@ class Music(commands.Cog):
     @check_voice()
     @commands.bot_has_guild_permissions(manage_threads=True)
     @commands.slash_command(extras={"only_voiced": True}, cooldown=song_request_thread_cd,
-                            description=f"{desc_prefix}Criar uma thread/conversa temporária para song-request (pedido de música)")
+                            description=f"{desc_prefix}Tạo một cuộc trò chuyện chủ đề/tạm thời cho các yêu cầu bài hát (yêu cầu âm nhạc)")
     async def song_request_thread(self, inter: disnake.AppCmdInter):
 
         try:
@@ -2578,33 +2575,33 @@ class Music(commands.Cog):
             guild = inter.guild
 
         if not self.bot.intents.message_content:
-            raise GenericError("**Atualmente não tenho a intent de message-content para conferir "
-                               "o conteúdo de mensagens**")
+            raise GenericError("**Tôi hiện không có ý định có nội dung tin nhắn để hội tụir "
+                               "Nội dung tin nhắn**")
 
         player: LavalinkPlayer = bot.music.players[guild.id]
 
         if player.static:
-            raise GenericError("**Você não pode usar esse comando com um canal de song-request configurado.**")
+            raise GenericError("**Bạn không thể sử dụng lệnh này với kênh yêu cầu bài hát được cấu hình.**")
 
         if player.has_thread:
-            raise GenericError("**Já há uma thread/conversa ativa no player.**")
+            raise GenericError("**Đã có một cuộc trò chuyện chủ đề/hoạt động trên người chơi.**")
 
         if not isinstance(player.text_channel, disnake.TextChannel):
-            raise GenericError(f"**O player-controller está ativo em um canal incompatível com "
-                               f"criação de thread/conversa.**")
+            raise GenericError(f"**Trình điều khiển người chơi đang hoạt động trên một kênh không tương thích với"
+                               f"Chủ đề/cuộc trò chuyện tạo ra.**")
 
         if not player.controller_mode:
-            raise GenericError("**A skin/aparência atual não é compatível com o sistem de song-request "
-                               "via thread/conversa\n\n"
-                               "Nota:** `Esse sistema requer uma skin que use botões.`")
+            raise GenericError("**Xuất hiện da/hiện tại không tương thích với song-request "
+                               "thông qua chủ đề/cuộc trò chuyện\n\n"
+                               "Lưu ý: ** `Hệ thống này yêu cầu một làn da sử dụng các nút.`")
 
         await inter.response.defer(ephemeral=True)
 
         thread = await player.message.create_thread(name=f"{bot.user.name} temp. song-request", auto_archive_duration=10080)
 
         txt = [
-            "Ativou o sistema de thread/conversa temporária para pedido de música.",
-            f"💬 **⠂{inter.author.mention} criou uma [thread/conversa]({thread.jump_url}) temporária para pedido de música.**"
+            "Đã kích hoạt hệ thống trò chuyện tạm thời/chủ đề cho yêu cầu âm nhạc.",
+            f"💬 **⠂{inter.author.mention} Đã tạo [Chủ đề/cuộc trò chuyện]({thread.jump_url}) tạm thời cho yêu cầu âm nhạc.**"
         ]
 
         await self.interaction_message(inter, txt, emoji="💬", defered=True, force=True)
@@ -2671,7 +2668,7 @@ class Music(commands.Cog):
     @has_source()
     @check_voice()
     @pool_command(name="nightcore", aliases=["nc"], only_voiced=True, cooldown=nightcore_cd, max_concurrency=nightcore_mc,
-                  description="Ativar/Desativar o efeito nightcore (Música acelerada com tom mais agudo).")
+                  description="Kích hoạt/Vô hiệu hóa hiệu ứng Nightcore (Nhạc tăng tốc với âm sắc hơn).")
     async def nightcore_legacy(self, ctx: CustomContext):
 
         await self.nightcore.callback(self=self, inter=ctx)
@@ -2680,7 +2677,7 @@ class Music(commands.Cog):
     @has_source()
     @check_voice()
     @commands.slash_command(
-        description=f"{desc_prefix}Ativar/Desativar o efeito nightcore (Música acelerada com tom mais agudo).",
+        description=f"{desc_prefix}Kích hoạt/Vô hiệu hóa hiệu ứng Nightcore (Nhạc tăng tốc với âm sắc hơn).",
         extras={"only_voiced": True}, cooldown=nightcore_cd, max_concurrency=nightcore_mc,
     )
     async def nightcore(self, inter: disnake.AppCmdInter):
@@ -2696,13 +2693,13 @@ class Music(commands.Cog):
 
         if player.nightcore:
             await player.set_timescale(pitch=1.2, speed=1.1)
-            txt = "ativou"
+            txt = "kích hoạt"
         else:
             await player.set_timescale(enabled=False)
             await player.update_filters()
-            txt = "desativou"
+            txt = "vô hiệu hóa"
 
-        txt = [f"{txt} o efeito nightcore.", f"🇳 **⠂{inter.author.mention} {txt} o efeito nightcore.**"]
+        txt = [f"{txt} Hiệu ứng Nightcore.", f"🇳 **⠂{inter.author.mention} {txt} hiệu ứng nightcore.**"]
 
         await self.interaction_message(inter, txt, emoji="🇳")
 
@@ -2712,13 +2709,13 @@ class Music(commands.Cog):
     @has_source()
     @check_voice()
     @pool_command(name="controller", aliases=["np", "ctl"], only_voiced=True, cooldown=controller_cd,
-                  max_concurrency=controller_mc, description="Enviar player controller para um canal específico/atual.")
+                  max_concurrency=controller_mc, description="Gửi bộ điều khiển người chơi đến một kênh cụ thể/hiện tại.")
     async def controller_legacy(self, ctx: CustomContext):
         await self.controller.callback(self=self, inter=ctx)
 
     @has_source()
     @check_voice()
-    @commands.slash_command(description=f"{desc_prefix}Enviar player controller para um canal específico/atual.",
+    @commands.slash_command(description=f"{desc_prefix}Gửi bộ điều khiển người chơi đến một kênh cụ thể/hiện tại.",
                             extras={"only_voiced": True}, cooldown=controller_cd, max_concurrency=controller_mc,)
     async def controller(self, inter: disnake.AppCmdInter):
 
@@ -2734,11 +2731,11 @@ class Music(commands.Cog):
         player: LavalinkPlayer = bot.music.players[guild.id]
 
         if player.static:
-            raise GenericError("Esse comando não pode ser usado no modo fixo do player.")
+            raise GenericError("Lệnh này không thể được sử dụng trong chế độ trình phát cố định.")
 
         if player.has_thread:
-            raise GenericError("**Esse comando não pode ser usado com uma conversa ativa na "
-                               f"[mensagem]({player.message.jump_url}) do player.**")
+            raise GenericError("**Lệnh này không thể được sử dụng với một cuộc trò chuyện tích cực trong "
+                               f"[tin nhắn]({player.message.jump_url}) của người chơi.**")
 
         if not inter.response.is_done():
             await inter.response.defer(ephemeral=True)
@@ -2750,18 +2747,18 @@ class Music(commands.Cog):
             try:
 
                 player.set_command_log(
-                    text=f"{inter.author.mention} moveu o player-controller para o canal {inter.channel.mention}.",
+                    text=f"{inter.author.mention} đã đưa bảng điều khuyển đến kênh {inter.channel.mention}.",
                     emoji="💠"
                 )
 
                 embed = disnake.Embed(
-                    description=f"💠 **⠂{inter.author.mention} moveu o player-controller para o canal:** {channel.mention}",
+                    description=f"💠 **⠂{inter.author.mention} đã đưa bảng điều khuyển đến kênh:** {channel.mention}",
                     color=self.bot.get_color(guild.me)
                 )
 
                 try:
                     if bot.user.id != self.bot.user.id:
-                        embed.set_footer(text=f"Via: {bot.user.display_name}", icon_url=bot.user.display_avatar.url)
+                        embed.set_footer(text=f"Sử dụng {bot.user.display_name}", icon_url=bot.user.display_avatar.url)
                 except AttributeError:
                     pass
 
@@ -2777,7 +2774,7 @@ class Music(commands.Cog):
         await player.invoke_np()
 
         if not isinstance(inter, CustomContext):
-            await inter.edit_original_message("**Player reenviado com sucesso!**")
+            await inter.edit_original_message("**Người chơi đã được gửi lại thành công!**")
 
     @is_dj()
     @has_player()
@@ -2791,22 +2788,25 @@ class Music(commands.Cog):
     @has_player()
     @check_voice()
     @pool_command(name="adddj", aliases=["adj"], only_voiced=True,
-                  description="Adicionar um membro à lista de DJ's na sessão atual do player.",
-                  usage="{prefix}{cmd} [id|nome|@user]\nEx: {prefix}{cmd} @membro")
-    async def add_dj_legacy(self, ctx: CustomContext, user: disnake.Member):
+                  description="Thêm một thành viên vào danh sách của DJ vào phiên người chơi hiện tại.")
+    async def add_dj_legacy(self, ctx: CustomContext, user: Optional[disnake.Member] = None):
+
+        if not user:
+            raise GenericError(f"**Bạn đã không báo cáo một thành viên (ID, đề cập, tên, v.v.).**")
+
         await self.add_dj.callback(self=self, inter=ctx, user=user)
 
     @is_dj()
     @has_player()
     @check_voice()
     @commands.slash_command(
-        description=f"{desc_prefix}Adicionar um membro à lista de DJ's na sessão atual do player.",
+        description=f"{desc_prefix}Thêm một thành viên vào danh sách của DJ vào phiên người chơi hiện tại.",
         extras={"only_voiced": True}
     )
     async def add_dj(
             self,
             inter: disnake.AppCmdInter, *,
-            user: disnake.User = commands.Param(name="membro", description="Membro a ser adicionado.")
+            user: disnake.User = commands.Param(name="membro", description="Chi để được thêm vào.")
     ):
 
         error_text = None
@@ -2825,25 +2825,25 @@ class Music(commands.Cog):
         user = guild.get_member(user.id)
 
         if user == inter.author:
-            error_text = "**Você não pode adicionar a si mesmo na lista de DJ's.**"
+            error_text = "**Bạn không thể tự thêm vào danh sách của DJ.**"
         elif user.guild_permissions.manage_channels:
-            error_text = f"você não pode adicionar o membro {user.mention} na lista de DJ's (ele(a) possui permissão de **gerenciar canais**)."
+            error_text = f"Bạn không thể thêm thành viên {user.mention} Trong danh sách DJ (anh ấy / cô ấy có quyền quản lý các kênh **)."
         elif user.id == player.player_creator:
-            error_text = f"**O membro {user.mention} é o criador do player...**"
+            error_text = f"**Các thành viên {user.mention} là người tạo ra người chơi ...**"
         elif user.id in player.dj:
-            error_text = f"**O membro {user.mention} já está na lista de DJ's**"
+            error_text = f"**Các thành viên {user.mention} đã nằm trong danh sách của DJ**"
 
         if error_text:
             raise GenericError(error_text)
 
         player.dj.add(user.id)
 
-        text = [f"adicionou {user.mention} à lista de DJ's.",
-                f"🎧 **⠂{inter.author.mention} adicionou {user.mention} na lista de DJ's.**"]
+        text = [f"thêm {user.mention} vào danh sách DJ.",
+                f"🎧 **⠂{inter.author.mention} đã thêm {user.mention} Vào danh sách DJ**"]
 
         if (player.static and channel == player.text_channel) or isinstance(inter.application_command,
                                                                             commands.InvokableApplicationCommand):
-            await inter.send(f"{user.mention} adicionado à lista de DJ's!{player.controller_link}")
+            await inter.send(f"{user.mention} Đã thêm vào danh sách của DJ!{player.controller_link}")
 
         await self.interaction_message(inter, txt=text, emoji="🎧")
 
@@ -2851,13 +2851,13 @@ class Music(commands.Cog):
     @has_player()
     @check_voice()
     @commands.slash_command(
-        description=f"{desc_prefix}Remover um membro da lista de DJ's na sessão atual do player.",
+        description=f"{desc_prefix}Hủy bỏ một thành viên khỏi danh sách của DJ tại phiên người chơi hiện tại.",
         extras={"only_voiced": True}
     )
     async def remove_dj(
             self,
             inter: disnake.AppCmdInter, *,
-            user: disnake.User = commands.Param(name="membro", description="Membro a ser adicionado.")
+            user: disnake.User = commands.Param(name="membro", description="Thành viên được thêm vào.")
     ):
 
         try:
@@ -2877,20 +2877,20 @@ class Music(commands.Cog):
             if inter.author.guild_permissions.manage_guild:
                 player.player_creator = None
             else:
-                raise GenericError(f"**O membro {user.mention} é o criador do player.**")
+                raise GenericError(f"**Các thành viên {user.mention} là người tạo ra người chơi.**")
 
         elif user.id not in player.dj:
-            GenericError(f"O membro {user.mention} não está na lista de DJ's")
+            GenericError(f"Các thành viên {user.mention}  không ở trong danh sách DJ's")
 
         else:
             player.dj.remove(user.id)
 
-        text = [f"removeu {user.mention} da lista de DJ's.",
-                f"🎧 **⠂{inter.author.mention} removeu {user.mention} da lista de DJ's.**"]
+        text = [f"LOẠI BỎ {user.mention} khỏi danh sách DJ's.",
+                f"🎧 **⠂{inter.author.mention} LOẠI BỎ {user.mention} khỏi danh sách DJ's.**"]
 
         if (player.static and channel == player.text_channel) or isinstance(inter.application_command,
                                                                             commands.InvokableApplicationCommand):
-            await inter.send(f"{user.mention} adicionado à lista de DJ's!{player.controller_link}")
+            await inter.send(f"{user.mention} Được thêm vào danh sách của DJ's!{player.controller_link}")
 
         await self.interaction_message(inter, txt=text, emoji="🎧")
 
@@ -2898,7 +2898,7 @@ class Music(commands.Cog):
     @has_player()
     @check_voice()
     @pool_command(name="stop", aliases=["leave", "parar"], only_voiced=True,
-                  description="Parar o player e me desconectar do canal de voz.")
+                  description="Dừng người chơi và ngắt kết nối tôi khỏi kênh giọng nói.")
     async def stop_legacy(self, ctx: CustomContext):
         await self.stop.callback(self=self, inter=ctx)
 
@@ -2906,7 +2906,7 @@ class Music(commands.Cog):
     @has_player()
     @check_voice()
     @commands.slash_command(
-        description=f"{desc_prefix}Parar o player e me desconectar do canal de voz.",
+        description=f"{desc_prefix}Dừng người chơi và ngắt kết nối tôi khỏi kênh giọng nói.",
         extras={"only_voiced": True}
     )
     async def stop(self, inter: disnake.AppCmdInter):
@@ -2921,7 +2921,7 @@ class Music(commands.Cog):
             guild = inter.guild
 
         player: LavalinkPlayer = bot.music.players[inter.guild_id]
-        player.command_log = f"{inter.author.mention} **parou o player!**"
+        player.command_log = f"{inter.author.mention} **đã dừng người chơi!**"
 
         if isinstance(inter, disnake.MessageInteraction):
             await player.destroy(inter=inter_destroy)
@@ -2929,20 +2929,20 @@ class Music(commands.Cog):
 
             embed = disnake.Embed(
                 color=self.bot.get_color(guild.me),
-                description=f"🛑 **⠂{inter.author.mention} parou o player.**"
+                description=f"🛑 **⠂{inter.author.mention} đã dừng người chơi.**"
             )
 
             try:
                 if bot.user.id != self.bot.user.id:
-                    embed.set_footer(text=f"Via: {bot.user.display_name}", icon_url=bot.user.display_avatar.url)
+                    embed.set_footer(text=f"Sử dụng {bot.user.display_name}", icon_url=bot.user.display_avatar.url)
             except AttributeError:
                 pass
 
             await inter.send(
                 embed=embed,
                 components=[
-                    disnake.ui.Button(label="Pedir uma música", emoji="🎶", custom_id=PlayerControls.add_song),
-                    disnake.ui.Button(label="Tocar favorito/integração", emoji="⭐", custom_id=PlayerControls.enqueue_fav)
+                    disnake.ui.Button(label="Yêu cầu một bài hát", emoji="🎶", custom_id=PlayerControls.add_song),
+                    disnake.ui.Button(label="Yêu thích/tích hợp", emoji="⭐", custom_id=PlayerControls.enqueue_fav)
                 ] if inter.guild else [],
                 ephemeral=player.static and player.text_channel.id == inter.channel_id
             )
@@ -2958,14 +2958,14 @@ class Music(commands.Cog):
     @has_player()
     @check_voice()
     @pool_command(name="shuffle", aliases=["sf", "shf", "sff", "misturar"], only_voiced=True,
-                  description="Misturar as músicas da fila", cooldown=queue_manipulation_cd, max_concurrency=remove_mc)
+                  description="Trộn nhạc trong hàng đợi", cooldown=queue_manipulation_cd, max_concurrency=remove_mc)
     async def shuffle_legacy(self, ctx: CustomContext):
         await self.shuffle_.callback(self, inter=ctx)
 
     @is_dj()
     @q.sub_command(
         name="shuffle",
-        description=f"{desc_prefix}Misturar as músicas da fila",
+        description=f"{desc_prefix}Trộn nhạc trong hàng đợi",
         extras={"only_voiced": True}, cooldown=queue_manipulation_cd, max_concurrency=remove_mc)
     async def shuffle_(self, inter: disnake.AppCmdInter):
 
@@ -2977,14 +2977,14 @@ class Music(commands.Cog):
         player: LavalinkPlayer = bot.music.players[inter.guild_id]
 
         if len(player.queue) < 3:
-            raise GenericError("**A fila tem que ter no mínimo 3 músicas para ser misturada.**")
+            raise GenericError("**Dòng phải có ít nhất 3 bài hát để được trộn lẫn.**")
 
         shuffle(player.queue)
 
         await self.interaction_message(
             inter,
-            ["misturou as músicas da fila.",
-             f"🔀 **⠂{inter.author.mention} misturou as músicas da fila.**"],
+            ["Trộn các bài hát từ dòng.",
+             f"🔀 **⠂{inter.author.mention} Trộn các bài hát từ dòng.**"],
             emoji="🔀"
         )
 
@@ -2992,13 +2992,13 @@ class Music(commands.Cog):
     @has_player()
     @check_voice()
     @pool_command(name="reverse", aliases=["invert", "inverter", "rv"], only_voiced=True,
-                  description="Inverter a ordem das músicas na fila", cooldown=queue_manipulation_cd, max_concurrency=remove_mc)
+                  description="Đảo ngược thứ tự của các bài hát trong hàng", cooldown=queue_manipulation_cd, max_concurrency=remove_mc)
     async def reverse_legacy(self, ctx: CustomContext):
         await self.reverse.callback(self=self, inter=ctx)
 
     @is_dj()
     @q.sub_command(
-        description=f"{desc_prefix}Inverter a ordem das músicas na fila",
+        description=f"{desc_prefix}Đảo ngược thứ tự của các bài hát trong hàng",
         extras={"only_voiced": True}, cooldown=queue_manipulation_cd, max_concurrency=remove_mc
     )
     async def reverse(self, inter: disnake.AppCmdInter):
@@ -3011,13 +3011,13 @@ class Music(commands.Cog):
         player: LavalinkPlayer = bot.music.players[inter.guild_id]
 
         if len(player.queue) < 2:
-            raise GenericError("**A fila tem que ter no mínimo 2 músicas para inverter a ordem.**")
+            raise GenericError("**Dòng phải có ít nhất 2 bài hát để đảo ngược thứ tự.**")
 
         player.queue.reverse()
         await self.interaction_message(
             inter,
-            txt=["inverteu a ordem das músicas na fila.",
-                 f"🔄 **⠂{inter.author.mention} inverteu a ordem das músicas na fila.**"],
+            txt=["Đảo ngược thứ tự của các bài hát trong hàng.",
+                 f"🔄 **⠂{inter.author.mention} Anh ấy đã đảo ngược thứ tự của các bài hát trong hàng.**"],
             emoji="🔄"
         )
 
@@ -3026,14 +3026,14 @@ class Music(commands.Cog):
     @check_voice()
     @has_player()
     @check_voice()
-    @pool_command(name="queue", aliases=["q", "fila"], description="Exibir as músicas que estão na fila.",
+    @pool_command(name="queue", aliases=["q", "fila"], description="Hiển thị các bài hát phù hợp.",
                   only_voiced=True, max_concurrency=queue_show_mc)
     async def queue_show_legacy(self, ctx: CustomContext):
         await self.display.callback(self=self, inter=ctx)
 
     @commands.max_concurrency(1, commands.BucketType.member)
     @q.sub_command(
-        description=f"{desc_prefix}Exibir as músicas que estão na fila.", max_concurrency=queue_show_mc
+        description=f"{desc_prefix}Hiển thị các bài hát phù hợp.", max_concurrency=queue_show_mc
     )
     async def display(self, inter: disnake.AppCmdInter):
 
@@ -3045,14 +3045,14 @@ class Music(commands.Cog):
         player: LavalinkPlayer = bot.music.players[inter.guild_id]
 
         if not player.queue:
-            raise GenericError("**Não há músicas na fila.**")
+            raise GenericError("**Không có bài hát trong dòng.**")
 
         view = QueueInteraction(player, inter.author)
         embed = view.embed
 
         try:
             if bot.user.id != self.bot.user.id:
-                embed.set_footer(text=f"Via: {bot.user.display_name}", icon_url=bot.user.display_avatar.url)
+                embed.set_footer(text=f"Sử dụng {bot.user.display_name}", icon_url=bot.user.display_avatar.url)
         except AttributeError:
             pass
 
@@ -3078,47 +3078,47 @@ class Music(commands.Cog):
         await view.wait()
 
     clear_flags = CommandArgparse()
-    clear_flags.add_argument('-songtitle', '-name', '-title', '-songname',nargs='+', help="incluir nome que tiver na música.\nEx: -name NCS", default=[])
-    clear_flags.add_argument('-uploader', '-author', '-artist', nargs = '+', default=[],
-                             help="Remover músicas com o nome que tiver no autor especificado.\nEx: -uploader sekai")
-    clear_flags.add_argument('-member', '-user', '-u', nargs='+', default=[],
-                             help="Remover músicas pedidas pelo usuário especificado.\nEx: -user @user")
+    clear_flags.add_argument('song_name', nargs='*', help="Bao gồm tên bạn có trong âm nhạc.")
+    clear_flags.add_argument('-uploader', '-author', '-artist', nargs = '+', default="",
+                             help="Bao gồm một cái tên bạn có trong tác giả âm nhạc.")
+    clear_flags.add_argument('-member', '-user', '-u', nargs='+', default="",
+                             help="Bao gồm âm nhạc được yêu cầu bởi người dùng đã chọn.")
     clear_flags.add_argument('-duplicates', '-dupes', '-duplicate', action='store_true',
-                             help="Remover músicas duplicadas.")
-    clear_flags.add_argument('-playlist', '-list', '-pl', nargs='+', default=[],
-                             help="Remover música que tiver com nome especificado na playlist associada.\nEx: -playlist minhaplaylist")
-    clear_flags.add_argument('-minimaltime', '-mintime', '-min','-minduration', '-minduration',  default=None,
-                             help="Remover músicas com a duração mínima especificada.\nEx: -min 1:23.")
-    clear_flags.add_argument('-maxduration', '-maxtime', '-max', default=None,
-                             help="Remover músicas com a duração máxima especificada.\nEx: -max 1:23.")
-    clear_flags.add_argument('-startposition', '-startpos', '-start', type=int, default=None,
-                             help="Remover músicas a partir de uma posição inicial da fila.\nEx: -start 10")
-    clear_flags.add_argument('-endposition', '-endpos', '-end', type=int, default=None,
-                             help="Remover músicas da fila até uma posição específica na fila.\nEx: -end 15")
-    clear_flags.add_argument('-absentmembers', '-absent', '-abs', action='store_true',
-                             help="Remover músicas adicionads por membros que saíram do canal")
+                             help="Bao gồm các bài hát trùng lặp.")
+    clear_flags.add_argument('-playlist', '-list', '-pl', nargs='+', default="",
+                             help="Bao gồm tên bạn có trên danh sách phát.")
+    clear_flags.add_argument('-minimal_time', '-mintime', '-min','-min_duration', '-minduration',  default=None,
+                             help="Bao gồm các bài hát có thời lượng tối thiểu được chỉ định (ví dụ 1:23).")
+    clear_flags.add_argument('-max_time', '-maxtime', '-max', '-max_duration', '-maxduration', default=None,
+                             help="Bao gồm các bài hát dòng từ một vị trí dòng cụ thể.")
+    clear_flags.add_argument('-start_position', '-startpos', '-start', type=int, default=None,
+                             help="Bao gồm các bài hát dòng từ một vị trí dòng cụ thể.")
+    clear_flags.add_argument('-end_position', '-endpos', '-end', type=int, default=None,
+                             help="Bao gồm các bài hát dòng vào một vị trí dòng cụ thể.")
+    clear_flags.add_argument('-absent', '-absentmembers', '-abs', action='store_true',
+                             help="Bao gồm các bài hát được thêm vào của các thành viên ngoài kênh")
 
     @is_dj()
     @has_player()
     @check_voice()
-    @pool_command(name="clear", aliases=["limpar"], description="Limpar a fila de música.", only_voiced=True,
-                  extras={"flags": clear_flags}, cooldown=queue_manipulation_cd, max_concurrency=remove_mc)
+    @pool_command(name="clear", aliases=["limpar"], description="Làm sạch dòng nhạc.", only_voiced=True,
+                  cooldown=queue_manipulation_cd, max_concurrency=remove_mc)
     async def clear_legacy(self, ctx: CustomContext, *, flags: str = ""):
 
-        args, unknown = ctx.command.extras['flags'].parse_known_args(flags.split())
+        args, unknown = self.clear_flags.parse_known_args(flags.split())
 
         await self.clear.callback(
             self=self, inter=ctx,
-            song_name=" ".join(args.songtitle + unknown),
+            song_name=" ".join(args.song_name + unknown),
             song_author=" ".join(args.uploader),
             user=await commands.MemberConverter().convert(ctx, " ".join(args.member)) if args.member else None,
             duplicates=args.duplicates,
             playlist=" ".join(args.playlist),
-            min_duration=args.minimaltime,
-            max_duration=args.maxduration,
-            range_start=args.startposition,
-            range_end=args.endposition,
-            absent_members=args.absentmembers
+            min_duration=args.minimal_time,
+            max_duration=args.max_time,
+            range_start=args.start_position,
+            range_end=args.end_position,
+            absent_members=args.absent
         )
 
     @is_dj()
@@ -3126,7 +3126,7 @@ class Music(commands.Cog):
     @check_voice()
     @commands.slash_command(
         name="clear_queue",
-        description=f"{desc_prefix}Limpar a fila de música.",
+        description=f"{desc_prefix}Làm sạch hàng đợi.",
         extras={"only_voiced": True}, cooldown=queue_manipulation_cd, max_concurrency=remove_mc
     )
     async def clear(
@@ -3162,7 +3162,7 @@ class Music(commands.Cog):
 
         if min_duration and max_duration:
             raise GenericError(
-                "Você deve escolher apenas uma das opções: **duração_abaixo_de** ou **duração_acima_de**.")
+                "Bạn chỉ nên chọn một trong các tùy chọn: ** Thời lượng_abaixa_de ** hoặc ** Thời lượng_acima_de**.")
 
         try:
             bot = inter.music_bot
@@ -3172,7 +3172,7 @@ class Music(commands.Cog):
         player: LavalinkPlayer = bot.music.players[inter.guild_id]
 
         if not player.queue:
-            raise GenericError("**Não há musicas na fila.**")
+            raise GenericError("**Không có bài hát trong hàng.**")
 
         filters = []
         final_filters = set()
@@ -3201,25 +3201,25 @@ class Music(commands.Cog):
 
         if not filters and not range_start and not range_end:
             player.queue.clear()
-            txt = ['limpou a fila de música.', f'♻️ **⠂{inter.author.mention} limpou a fila de música.**']
+            txt = ['xóa dòng nhạc.', f'♻️ **⠂{inter.author.mention} Làm sạch dòng nhạc.**']
 
         else:
 
             if range_start and range_end:
 
                 if range_start >= range_end:
-                    raise GenericError("**A posição final deve ser maior que a posição inicial!**")
+                    raise GenericError("**Vị trí cuối cùng phải lớn hơn vị trí bắt đầu!**")
 
                 song_list = list(player.queue)[range_start - 1: range_end - 1]
-                txt.append(f"**Posição inicial da fila:** `{range_start}`\n"
-                           f"**Posição final da fila:** `{range_end}`")
+                txt.append(f"**Vị trí hàng đợi ban đầu:** `{range_start}`\n"
+                           f"**Vị trí dòng cuối cùng:** `{range_end}`")
 
             elif range_start:
                 song_list = list(player.queue)[range_start - 1:]
-                txt.append(f"**Posição inicial da fila:** `{range_start}`")
+                txt.append(f"**Vị trí hàng đợi ban đầu:** `{range_start}`")
             elif range_end:
                 song_list = list(player.queue)[:range_end - 1]
-                txt.append(f"**Posição final da fila:** `{range_end}`")
+                txt.append(f"**Vị trí dòng cuối cùng:** `{range_end}`")
             else:
                 song_list = list(player.queue)
 
@@ -3264,11 +3264,12 @@ class Music(commands.Cog):
 
                 if 'playlist' in temp_filter:
                     if playlist == t.playlist_name:
-                        playlist_hyperlink.add(f"[`{fix_characters(t.playlist_name)}`]({t.playlist_url})")
+                        playlist_hyperlink.add(f"[`{fix_characters(t.playlist_name)}`]({t.playlist_urrl})")
                         temp_filter.remove('playlist')
                         final_filters.add('playlist')
                     elif isinstance(inter, CustomContext) and playlist.lower() in t.playlist_name.lower():
-                        playlist_hyperlink.add(f"[`{fix_characters(t.playlist_name)}`]({t.playlist_url})")
+                        playlist = t.playlist_name
+                        playlist_hyperlink.add(f"[`{fix_characters(t.playlist_name)}`]({t.playlist_urrl})")
                         temp_filter.remove('playlist')
                         final_filters.add('playlist')
 
@@ -3279,60 +3280,60 @@ class Music(commands.Cog):
             duplicated_titles.clear()
 
             if not deleted_tracks:
-                await inter.send("Nenhuma música encontrada!", ephemeral=True)
+                await inter.send("Không tìm thấy bài hát!", ephemeral=True)
                 return
 
             try:
                 final_filters.remove("song_name")
-                txt.append(f"**Inclui nome:** `{fix_characters(song_name)}`")
+                txt.append(f"**Bao gồm tên:** `{fix_characters(song_name)}`")
             except:
                 pass
 
             try:
                 final_filters.remove("song_author")
-                txt.append(f"**Inclui nome no uploader/artista:** `{fix_characters(song_author)}`")
+                txt.append(f"**Bao gồm tên trong trình tải lên/nghệ sĩ:** `{fix_characters(song_author)}`")
             except:
                 pass
 
             try:
                 final_filters.remove("user")
-                txt.append(f"**Pedido pelo membro:** {user.mention}")
+                txt.append(f"**pedidoPelCácThànhViên:** {user.mention}")
             except:
                 pass
 
             try:
                 final_filters.remove("playlist")
-                txt.append(f"**Playlist:** {' | '.join(playlist_hyperlink)}")
+                txt.append(f"**Playlist:** `{fix_characters(playlist)}`")
             except:
                 pass
 
             try:
                 final_filters.remove("time_below")
-                txt.append(f"**Com duração inicial/igual:** `{time_format(min_duration)}`")
+                txt.append(f"**Với thời lượng ban đầu/bằng nhau:** `{time_format(min_duration)}`")
             except:
                 pass
 
             try:
                 final_filters.remove("time_above")
-                txt.append(f"**Com duração máxima:** `{time_format(max_duration)}`")
+                txt.append(f"**Với thời lượng tối đa:** `{time_format(max_duration)}`")
             except:
                 pass
 
             try:
                 final_filters.remove("duplicates")
-                txt.append(f"**Músicas duplicadas**")
+                txt.append(f"**Bài hát trùng lặp**")
             except:
                 pass
 
             try:
                 final_filters.remove("absent_members")
-                txt.append("`Músicas pedidas por membros que saíram do canal.`")
+                txt.append("`Các bài hát được yêu cầu bởi các thành viên rời khỏi kênh.`")
             except:
                 pass
 
-            txt = [f"removeu {deleted_tracks} música(s) da fila via clear.",
-                   f"♻️ **⠂{inter.author.mention} removeu {deleted_tracks} música(s) da fila usando os seguintes "
-                   f"filtros:**\n\n" + '\n'.join(txt)]
+            txt = [f"LOẠI BỎ {deleted_tracks} các bài hát thông qua clear.",
+                   f"♻️ **⠂{inter.author.mention} LOẠI BỎ {deleted_tracks} Các bài hát từ dòng sử dụng các bài hát sau "
+                   f"bộ lọc:**\n\n" + '\n'.join(txt)]
 
         await self.interaction_message(inter, txt, emoji="♻️")
 
@@ -3389,7 +3390,7 @@ class Music(commands.Cog):
     @has_player()
     @check_voice()
     @pool_command(name="restrict", aliases=["rstc", "restrito"], only_voiced=True, cooldown=restrict_cd, max_concurrency=restrict_mc,
-                  description="Ativar/Desativar o modo restrito de comandos que requer DJ/Staff.")
+                  description="Kích hoạt/Vô hiệu hóa chế độ lệnh hạn chế yêu cầu DJ/nhân viên.")
     async def restrict_mode_legacy(self, ctx: CustomContext):
 
         await self.restrict_mode.callback(self=self, inter=ctx)
@@ -3398,7 +3399,7 @@ class Music(commands.Cog):
     @has_player()
     @check_voice()
     @commands.slash_command(
-        description=f"{desc_prefix}Ativar/Desativar o modo restrito de comandos que requer DJ/Staff.",
+        description=f"{desc_prefix}Kích hoạt/Vô hiệu hóa chế độ lệnh hạn chế của các lệnh yêu cầu DJ/nhân viên.",
         extras={"only_voiced": True}, cooldown=restrict_cd, max_concurrency=restrict_mc)
     async def restrict_mode(self, inter: disnake.AppCmdInter):
 
@@ -3411,11 +3412,11 @@ class Music(commands.Cog):
 
         player.restrict_mode = not player.restrict_mode
 
-        msg = ["ativou", "🔐"] if player.restrict_mode else ["desativou", "🔓"]
+        msg = ["kích hoạt", "🔐"] if player.restrict_mode else ["vô hiệu hóa", "🔓"]
 
         text = [
-            f"{msg[0]} o modo restrito de comandos do player (que requer DJ/Staff).",
-            f"{msg[1]} **⠂{inter.author.mention} {msg[0]} o modo restrito de comandos do player (que requer DJ/Staff).**"
+            f"{msg[0]} Chế độ hạn chế của các lệnh người chơi (yêu cầu DJ/nhân viên).",
+            f"{msg[1]} **⠂{inter.author.mention} {msg[0]} Chế độ hạn chế của các lệnh người chơi (yêu cầu DJ/nhân viên).**"
         ]
 
         await self.interaction_message(inter, text, emoji=msg[1])
@@ -3427,7 +3428,7 @@ class Music(commands.Cog):
     @check_voice()
     @commands.has_guild_permissions(manage_guild=True)
     @pool_command(name="247", aliases=["nonstop"], only_voiced=True, cooldown=nonstop_cd, max_concurrency=nonstop_mc,
-                  description="Ativar/Desativar o modo 24/7 do player (Em testes).")
+                  description="Kích hoạt/Tắt chế độ 24/7 của trình phát (trong các thử nghiệm).")
     async def nonstop_legacy(self, ctx: CustomContext):
         await self.nonstop.callback(self=self, inter=ctx)
 
@@ -3435,7 +3436,7 @@ class Music(commands.Cog):
     @check_voice()
     @commands.slash_command(
         name="247",
-        description=f"{desc_prefix}Ativar/Desativar o modo 24/7 do player (Em testes).",
+        description=f"{desc_prefix}Kích hoạt/Vô hiệu hóa Chế độ 24/7 của trình phát (trong các thử nghiệm).",
         default_member_permissions=disnake.Permissions(manage_guild=True),
         extras={"only_voiced": True}, cooldown=nonstop_cd, max_concurrency=nonstop_mc
     )
@@ -3450,11 +3451,11 @@ class Music(commands.Cog):
 
         player.keep_connected = not player.keep_connected
 
-        msg = ["ativou", "♾️"] if player.keep_connected else ["desativou", "❌"]
+        msg = ["kích hoạt", "♾️"] if player.keep_connected else ["vô hiệu hóa", "❌"]
 
         text = [
-            f"{msg[0]} o modo 24/7 (interrupto) do player.",
-            f"{msg[1]} **⠂{inter.author.mention} {msg[0]} o modo 24/7 (interrupto) do player.**"
+            f"{msg[0]} Chế độ trình phát 24/7 (cài đặt).",
+            f"{msg[1]} **⠂{inter.author.mention} {msg[0]} Chế độ 24/7 (cài đặt) của người chơi.**"
         ]
 
         if not len(player.queue):
@@ -3477,7 +3478,7 @@ class Music(commands.Cog):
     @has_player()
     @check_voice()
     @pool_command(name="autoplay", aliases=["ap", "aplay"], only_voiced=True, cooldown=autoplay_cd, max_concurrency=autoplay_mc,
-                  description="Ativar/Desativar a reprodução automática ao acabar as músicas da fila.")
+                  description="Kích hoạt/tắt phát lại tự động bằng cách hoàn thành các dòng trong hàng đợi.")
     async def autoplay_legacy(self, ctx: CustomContext):
         await self.autoplay.callback(self=self, inter=ctx)
 
@@ -3485,7 +3486,7 @@ class Music(commands.Cog):
     @check_voice()
     @commands.slash_command(
         name="autoplay",
-        description=f"{desc_prefix}Ativar/Desativar a reprodução automática ao acabar as músicas da fila.",
+        description=f"{desc_prefix}Kích hoạt/tắt phát lại tự động bằng cách hoàn thành các dòng trong hàng đợi.",
         extras={"only_voiced": True}, cooldown=autoplay_cd, max_concurrency=autoplay_mc
     )
     async def autoplay(self, inter: disnake.AppCmdInter):
@@ -3499,10 +3500,9 @@ class Music(commands.Cog):
 
         player.autoplay = not player.autoplay
 
-        msg = ["ativou", "🔄"] if player.autoplay else ["desativou", "❌"]
+        msg = ["kích hoạt", "🔄"] if player.autoplay else ["vô hiệu hóa", "❌"]
 
-        text = [f"{msg[0]} a reprodução automática.",
-                f"{msg[1]} **⠂{inter.author.mention} {msg[0]} a reprodução automática.**"]
+        text = [f"{msg[0]}  Tự động phát.", f"{msg[1]} **⠂{inter.author.mention} {msg[0]}  Tự động phát.**"]
 
         if player.current:
             await self.interaction_message(inter, txt=text, emoji=msg[1])
@@ -3517,12 +3517,12 @@ class Music(commands.Cog):
     @is_dj()
     @commands.cooldown(1, 10, commands.BucketType.guild)
     @commands.slash_command(
-        description=f"{desc_prefix}Migrar o player para outro servidor de música."
+        description=f"{desc_prefix}Di chuyển người chơi sang một máy chủ âm nhạc khác."
     )
     async def change_node(
             self,
             inter: disnake.AppCmdInter,
-            node: str = commands.Param(name="servidor", description="Servidor de música")
+            node: str = commands.Param(name="server", description="Máy chủ âm nhạc")
     ):
 
         try:
@@ -3531,25 +3531,25 @@ class Music(commands.Cog):
             bot = inter.bot
 
         if node not in bot.music.nodes:
-            raise GenericError(f"O servidor de música **{node}** não foi encontrado.")
+            raise GenericError(f"Máy chủ âm nhạc **{node}** không tìm thấy.")
 
         player: LavalinkPlayer = bot.music.players[inter.guild_id]
 
         if node == player.node.identifier:
-            raise GenericError(f"O player já está no servidor de música **{node}**.")
+            raise GenericError(f"Người chơi đã ở trên máy chủ âm nhạc **{node}**.")
 
         await player.change_node(node)
 
         await self.interaction_message(
             inter,
-            [f"Migrou o player para o servidor de música **{node}**",
-             f"**O player foi migrado para o servidor de música:** `{node}`"],
+            [f"Di chuyển trình phát sang máy chủ âm nhạc **{node}**",
+             f"**Người chơi đã được di chuyển đến máy chủ âm nhạc:** `{node}`"],
             emoji="🌎"
         )
 
     @search.autocomplete("server")
     @play.autocomplete("server")
-    @change_node.autocomplete("servidor")
+    @change_node.autocomplete("server")
     async def node_suggestions(self, inter: disnake.Interaction, query: str):
 
         try:
@@ -3572,7 +3572,7 @@ class Music(commands.Cog):
         return [n.identifier for n in bot.music.nodes.values() if n != node
                 and query.lower() in n.identifier.lower() and n.available and n.is_available]
 
-    @commands.command(aliases=["puptime"], description="Ver informações de tempo que o player está ativo no servidor.")
+    @commands.command(aliases=["puptime"], description="Xem thông tin thời gian mà người chơi đang hoạt động trên máy chủ.")
     @commands.cooldown(1, 5, commands.BucketType.guild)
     async def playeruptime(self, ctx: CustomContext):
 
@@ -3582,12 +3582,12 @@ class Music(commands.Cog):
                 player = bot.music.players[ctx.guild.id]
                 uptime_info.append(f"**Bot:** {bot.user.mention}\n"
                             f"**Uptime:** <t:{player.uptime}:R>\n"
-                            f"**Canal:** {player.guild.me.voice.channel.mention}")
+                            f"**Kênh:** {player.guild.me.voice.channel.mention}")
             except KeyError:
                 continue
 
         if not uptime_info:
-            raise GenericError("**Não há players ativos no servidor.**")
+            raise GenericError("**Không có người chơi tích cực trên máy chủ.**")
 
         await ctx.reply(
             embed=disnake.Embed(
@@ -3644,7 +3644,7 @@ class Music(commands.Cog):
 
                 if not player.is_paused and not player.is_playing:
                     await player.process_next()
-                print(f"{self.bot.user} - {player.guild.name} [{guild_id}] - Player Reconectado no canal de voz")
+                print(f"{self.bot.user} - {player.guild.name} [{guild_id}] - Người chơi kết nối lại không có kênh giọng nói")
             except:
                 traceback.print_exc()
 
@@ -3715,7 +3715,7 @@ class Music(commands.Cog):
             channel_db = None
         except disnake.Forbidden:
             channel_db = bot.get_channel(inter.channel_id)
-            warn_message = f"Não tenho permissão de acessar o canal <#{static_player['channel']}>, o player será usado no modo tradicional."
+            warn_message = f"Tôi không được phép truy cập kênh <#{static_player['channel']}>, Người chơi sẽ được sử dụng ở chế độ truyền thống."
             static_player["channel"] = None
 
         if not channel_db or channel_db.guild.id != inter.guild_id:
@@ -3737,8 +3737,8 @@ class Music(commands.Cog):
                             if (channel_db.archived or channel_db.locked) and not channel_db.parent.permissions_for(
                                     guild.me).manage_threads:
                                 raise GenericError(
-                                    f"**{bot.user.mention} não possui permissão de gerenciar tópicos para "
-                                    f"desarquivar/destrancar o tópico: {channel_db.mention}**")
+                                    f"**{bot.user.mention} không có quyền quản lý các chủ đề "
+                                    f"Tickook/Untit chủ đề: {channel_db.mention}**")
 
                             await channel_db.edit(archived=False, locked=False)
                 except AttributeError:
@@ -3750,16 +3750,16 @@ class Music(commands.Cog):
 
                     if not channel_db_perms.send_messages:
                         raise GenericError(
-                            f"**{bot.user.mention} não possui permissão para enviar mensagens no canal <#{static_player['channel']}>**\n"
-                            "Caso queira resetar a configuração do canal de pedir música, use o comando /reset ou /setup "
-                            "novamente..."
+                            f"**{bot.user.mention} không có quyền gửi tin nhắn trên kênh <#{static_player['channel']}>**\n"
+                            "Nếu bạn muốn đặt lại cài đặt của kênh để đặt hàng, hãy sử dụng lệnh /reset hoặc /setup "
+                            "lại..."
                         )
 
                     if not channel_db_perms.embed_links:
                         raise GenericError(
-                            f"**{bot.user.mention} não possui permissão para anexar links/embeds no canal <#{static_player['channel']}>**\n"
-                            "Caso queira resetar a configuração do canal de pedir música, use o comando /reset ou /setup "
-                            "novamente..."
+                            f"**{bot.user.mention} không có quyền đính kèm liên kết/nhúng trên kênh <#{static_player['channel']}>**\n"
+                            "Nếu bạn muốn đặt lại cài đặt của kênh để đặt hàng, hãy sử dụng lệnh /reset hoặc /setup "
+                            "lại..."
                         )
 
         return channel_db, warn_message
@@ -3772,7 +3772,7 @@ class Music(commands.Cog):
     ):
 
         if not command:
-            raise GenericError("comando não encontrado/implementado.")
+            raise GenericError("Lệnh không tìm thấy/thực hiện.")
 
         await check_cmd(command, interaction)
 
@@ -3791,7 +3791,7 @@ class Music(commands.Cog):
     async def guild_pin(self, interaction: disnake.MessageInteraction):
 
         if not self.bot.bot_ready:
-            await interaction.send("Ainda estou inicializando...\nPor favor aguarde mais um pouco...", ephemeral=True)
+            await interaction.send("ATôi đang khởi tạo...\nVui lòng đợi lâu hơn một chút...", ephemeral=True)
             return
 
         if interaction.data.custom_id != "player_guild_pin":
@@ -3802,7 +3802,7 @@ class Music(commands.Cog):
             return
 
         if not interaction.user.voice:
-            await interaction.send("Você deve entrar em um canal de voz para usar isto.", ephemeral=True)
+            await interaction.send("Bạn phải nhập một kênh giọng nói để sử dụng điều này.", ephemeral=True)
             return
 
         try:
@@ -3814,7 +3814,7 @@ class Music(commands.Cog):
         try:
             query = guild_data["player_controller"]["fav_links"][interaction.data.values[0]]['url']
         except KeyError:
-            return await interaction.send("**O item selecionado não foi encontrado na base de dados...**", ephemeral=True)
+            raise GenericError("**Mục đã chọn không được tìm thấy trong cơ sở dữ liệu...**")
 
         kwargs = {
             "query": f"> pin: {query}",
@@ -3855,7 +3855,7 @@ class Music(commands.Cog):
     async def player_controller(self, interaction: disnake.MessageInteraction, control: str):
 
         if not self.bot.bot_ready:
-            await interaction.send("Ainda estou inicializando...", ephemeral=True)
+            await interaction.send("Tôi vẫn bắt đầu...", ephemeral=True)
             return
 
         if not interaction.guild:
@@ -3877,7 +3877,7 @@ class Music(commands.Cog):
             if control == PlayerControls.fav_manageer:
 
                 if str(interaction.user.id) not in interaction.message.content:
-                    await interaction.send("Você não pode interagir aqui!", ephemeral=True)
+                    await interaction.send("Bạn không thể tương tác ở đây!", ephemeral=True)
                     return
 
                 cmd = self.bot.get_slash_command("fav").children.get("manager")
@@ -3887,34 +3887,34 @@ class Music(commands.Cog):
             if control == PlayerControls.integration_manageer:
 
                 if str(interaction.user.id) not in interaction.message.content:
-                    await interaction.send("Você não pode interagir aqui!", ephemeral=True)
+                    await interaction.send("Bạn không thể tương tác ở đây!", ephemeral=True)
                     return
 
-                cmd = self.bot.get_slash_command("integration").children.get("manager")
+                cmd = self.bot.get_slash_command("integration").children.get("manager") 
                 await self.process_player_interaction(interaction, cmd, kwargs)
                 return
 
             if control == PlayerControls.add_song:
 
                 if not interaction.user.voice:
-                    raise GenericError("**Você deve entrar em um canal de voz para usar esse botão.**")
+                    raise GenericError("**Bạn phải vào một kênh thoại để sử dụng nút này.**")
 
                 await interaction.response.send_modal(
-                    title="Pedir uma música",
+                    title="Yêu cầu một bài hát",
                     custom_id="modal_add_song",
                     components=[
                         disnake.ui.TextInput(
                             style=disnake.TextInputStyle.short,
-                            label="Nome/link da música.",
-                            placeholder="Nome ou link do youtube/spotify/soundcloud etc.",
+                            label="Tên/liên kết âm nhạc.",
+                            placeholder="Tên hoặc liên kết YouTube/Spotify/SoundCloud, v.v.",
                             custom_id="song_input",
                             max_length=150,
                             required=True
                         ),
                         disnake.ui.TextInput(
                             style=disnake.TextInputStyle.short,
-                            label="Posição da fila (número).",
-                            placeholder="Opcional, caso não seja usado será adicionada no final.",
+                            label="Vị trí bài hát sẽ được thêm vào.",
+                            placeholder="Tùy chọn, nếu không được sử dụng sẽ được thêm vào cuối.",
                             custom_id="song_position",
                             max_length=3,
                             required=False
@@ -3944,7 +3944,7 @@ class Music(commands.Cog):
                 try:
                     player: LavalinkPlayer = self.bot.music.players[interaction.guild_id]
                 except KeyError:
-                    await interaction.send("Não há player ativo no servidor...", ephemeral=True)
+                    await interaction.send("Không có trình phát đang hoạt động trên máy chủ...", ephemeral=True)
                     await send_idle_embed(interaction.message, bot=self.bot)
                     return
 
@@ -3952,7 +3952,7 @@ class Music(commands.Cog):
                     return
 
                 if player.interaction_cooldown:
-                    raise GenericError("O player está em cooldown, tente novamente em instantes.")
+                    raise GenericError("Thao tác quá nhanh, hãy thao tác lại")
 
                 try:
                     vc = player.guild.me.voice.channel
@@ -3962,32 +3962,32 @@ class Music(commands.Cog):
 
                 if control == PlayerControls.help_button:
                     embed = disnake.Embed(
-                        description="📘 **IFORMAÇÕES SOBRE OS BOTÕES** 📘\n\n"
-                                    "⏯️ `= Pausar/Retomar a música.`\n"
-                                    "⏮️ `= Voltar para a música tocada anteriormente.`\n"
-                                    "⏭️ `= Pular para a próxima música.`\n"
-                                    "🔀 `= Misturar as músicas da fila.`\n"
-                                    "🎶 `= Adicionar música/playlist/favorito.`\n"
-                                    "⏹️ `= Parar o player e me desconectar do canal.`\n"
-                                    "📑 `= Exibir a fila de música.`\n"
-                                    "🛠️ `= Alterar algumas configurações do player:`\n"
-                                    "`volume / efeito nightcore / repetição / modo restrito.`\n",
+                        description="📘 **Thông tin nút** 📘\n\n"
+                                    "⏯️ `= Tạm dừng/trả lại âm nhạc.`\n"
+                                    "⏮️ `= Trở lại với âm nhạc được phát trước đó.`\n"
+                                    "⏭️ `= Nhảy sang bài hát tiếp theo.`\n"
+                                    "🔀 `=Trộn âm nhạc trong dòng.`\n"
+                                    "🎶 `= Thêm nhạc/danh sách phát/yêu thích.`\n"
+                                    "⏹️ `= Dừng người chơi và ngắt kết nối tôi khỏi kênh.`\n"
+                                    "📑 `= Hiển thị dòng nhạc.`\n"
+                                    "🛠️ `= Thay đổi một số cài đặt người chơi:`\n"
+                                    "`Âm lượng / Hiệu ứng Nightcore / sự lặp lại / chế độ bị hạn chế.`\n",
                         color=self.bot.get_color(interaction.guild.me)
                     )
 
-                    await interaction.response.send_message(embed=embed, ephemeral=True)
+                    await interaction.response.send_message(embed=embed, ephemeral=True)    
                     return
 
                 if not interaction.author.voice or interaction.author.voice.channel != vc:
-                    raise GenericError(f"Você deve estar no canal <#{vc.id}> para usar os botões do player.")
+                    raise GenericError(f"Bạn phải ở trên kênh <#{vc.id}> Để sử dụng các nút người chơi.")
 
                 if control == PlayerControls.miniqueue:
                     await is_dj().predicate(interaction)
                     player.mini_queue_enabled = not player.mini_queue_enabled
                     player.set_command_log(
                         emoji="📑",
-                        text=f"{interaction.author.mention} {'ativou' if player.mini_queue_enabled else 'desativou'} "
-                             f"a mini-fila do player."
+                        text=f"{interaction.author.mention} {'kích hoạt' if player.mini_queue_enabled else 'vô hiệu hóa'} "
+                             f"Danh sách hàng chờ mini."
                     )
                     await player.invoke_np(interaction=interaction)
                     return
@@ -4024,7 +4024,7 @@ class Music(commands.Cog):
                     await self.player_interaction_concurrency.acquire(interaction)
                 except commands.MaxConcurrencyReached:
                     raise GenericError(
-                        "**Você tem uma interação em aberto!**\n`Se for uma mensagem oculta, evite clicar em \"ignorar\".`")
+                        "**Bạn có một tương tác mở!**\n`Nếu đó là một tin nhắn ẩn, tránh nhấp vào \"bỏ qua\".`")
 
             if not cmd:
                 cmd = self.bot.get_slash_command(control[12:])
@@ -4059,11 +4059,11 @@ class Music(commands.Cog):
 
                 if position:
                     if not position.isdigit():
-                        raise GenericError("**A posição da fila tem que ser um número.**")
+                        raise GenericError("**Vị trí của dòng phải là một số.**")
                     position = int(position)
 
                     if position < 1:
-                        raise GenericError("**Número da posição da fila tem que ser 1 ou superior.**")
+                        raise GenericError("**Số vị trí Rinning phải là 1 hoặc cao hơn.**")
 
                 kwargs = {
                     "query": query,
@@ -4154,13 +4154,13 @@ class Music(commands.Cog):
                 await message.channel.send(
                     message.author.mention,
                     embed=disnake.Embed(
-                        description="Infelizmente não posso conferir o conteúdo de sua mensagem...\n"
-                                    "Tente adicionar música usando **/play** ou clique em um dos botões abaixo:",
+                        description="Thật không may, tôi không thể kiểm tra nội dung của tin nhắn của bạn...\n"
+                                    "Cố gắng thêm nhạc bằng cách sử dụng **/play ** hoặc nhấp vào một trong các nút bên dưới:",
                         color=self.bot.get_color(message.guild.me)
                     ),
                     components=[
-                        disnake.ui.Button(emoji="🎶", custom_id=PlayerControls.add_song, label="Pedir uma música"),
-                        disnake.ui.Button(emoji="⭐", custom_id=PlayerControls.enqueue_fav, label="Tocar favorito/integração")
+                        disnake.ui.Button(emoji="🎶", custom_id=PlayerControls.add_song, label="Yêu cầu một bài hát"),
+                        disnake.ui.Button(emoji="⭐", custom_id=PlayerControls.enqueue_fav, label="Chơi yêu thích/tích hợp ")
                     ],
                     delete_after=20
                 )
@@ -4203,19 +4203,19 @@ class Music(commands.Cog):
                 try:
                     attachment = message.attachments[0]
                 except IndexError:
-                    await message.channel.send(f"{message.author.mention} você deve enviar um link/nome da música.")
+                    await message.channel.send(f"{message.author.mention} Bạn phải gửi tên/tên âm nhạc.")
                     return
 
                 else:
 
                     if attachment.size > 18000000:
-                        await message.channel.send(f"{message.author.mention} o arquivo que você enviou deve ter o tamanho "
-                                                   f"inferior a 18mb.")
+                        await message.channel.send(f"{message.author.mention} Tệp bạn đã gửi phải có kích thướco "
+                                                   f"kém hơn 18MB.")
                         return
 
                     if attachment.content_type not in self.audio_formats:
-                        await message.channel.send(f"{message.author.mention} o arquivo que você enviou deve ter o tamanho "
-                                                   f"inferior a 18mb.")
+                        await message.channel.send(f"{message.author.mention} Tệp bạn đã gửi phải có kích thước "
+                                                   f"kém hơn 18MB.")
                         return
 
                     message.content = attachment.url
@@ -4225,7 +4225,7 @@ class Music(commands.Cog):
             except:
 
                 await message.channel.send(
-                    f"{message.author.mention} você deve aguardar seu pedido de música anterior carregar...",
+                    f"{message.author.mention} Bạn phải đợi đơn hàng âm nhạc trước đây của bạn để tải...",
                 )
 
                 await self.delete_message(message)
@@ -4246,15 +4246,15 @@ class Music(commands.Cog):
                     view = SelectInteraction(
                         user=message.author,
                         opts=[
-                            disnake.SelectOption(label="Música", emoji="🎵",
-                                                 description="Carregar apenas a música do link.", value="music"),
+                            disnake.SelectOption(label="Bài hát", emoji="🎵",
+                                                 description="Chỉ tải nhạc từ liên kết.", value="music"),
                             disnake.SelectOption(label="Playlist", emoji="🎶",
-                                                 description="Carregar playlist com a música atual.", value="playlist"),
+                                                 description="Chơi danh sách phát với âm nhạc hiện tại.", value="playlist"),
                         ], timeout=30)
 
                     embed = disnake.Embed(
-                        description="**O link contém vídeo com playlist.**\n"
-                                    f'Selecione uma opção em até <t:{int((disnake.utils.utcnow() + datetime.timedelta(seconds=30)).timestamp())}:R> para prosseguir.',
+                        description="**Liên kết chứa video với danh sách phát.**\n"
+                                    f'Chọn một tùy chọn trong <t:{int((disnake.utils.utcnow() + datetime.timedelta(seconds=30)).timestamp())}:R> ',
                         color=self.bot.get_color(message.guild.me)
                     )
 
@@ -4278,7 +4278,7 @@ class Music(commands.Cog):
         except Exception as e:
             traceback.print_exc()
             has_exception = e
-            error = f"{message.author.mention} **ocorreu um erro ao tentar obter resultados para sua busca:** ```py\n{e}```"
+            error = f"{message.author.mention} **Đã xảy ra lỗi khi cố gắng nhận kết quả cho tìm kiếm của bạn:** ```py\n{e}```"
 
         if error:
 
@@ -4309,7 +4309,7 @@ class Music(commands.Cog):
                 error_msg, full_error_msg, kill_process = parse_error(message, has_exception)
 
                 embed = disnake.Embed(
-                    title="Ocorreu um erro em um servidor (song-request):",
+                    title="Xảy ra lỗi trên máy chủ (song-request):",
                     timestamp=disnake.utils.utcnow(),
                     description=f"```py\n{repr(has_exception)[:2030].replace(self.bot.http.token, 'mytoken')}```"
                 )
@@ -4320,23 +4320,23 @@ class Music(commands.Cog):
                 )
 
                 embed.add_field(
-                    name="Servidor:", inline=False,
+                    name="Máy chủ:", inline=False,
                     value=f"```\n{disnake.utils.escape_markdown(ctx.guild.name)}\nID: {ctx.guild.id}```"
                 )
 
                 embed.add_field(
-                    name="Conteúdo do pedido de música:", inline=False,
+                    name="Nội dung yêu cầu âm nhạc:", inline=False,
                     value=f"```\n{message.content}```"
                 )
 
                 embed.add_field(
-                    name="Canal de texto:", inline=False,
+                    name="Kênh văn bản:", inline=False,
                     value=f"```\n{disnake.utils.escape_markdown(ctx.channel.name)}\nID: {ctx.channel.id}```"
                 )
 
                 if vc := ctx.author.voice:
                     embed.add_field(
-                        name="Canal de voz (user):", inline=False,
+                        name="Kênh thoại (người dùng):", inline=False,
                         value=f"```\n{disnake.utils.escape_markdown(vc.channel.name)}" +
                               (f" ({len(vc.channel.voice_states)}/{vc.channel.user_limit})"
                                if vc.channel.user_limit else "") + f"\nID: {vc.channel.id}```"
@@ -4345,7 +4345,7 @@ class Music(commands.Cog):
                 if vcbot := ctx.guild.me.voice:
                     if vcbot.channel != vc.channel:
                         embed.add_field(
-                            name="Canal de voz (bot):", inline=False,
+                            name="Kênh thoại (bot):", inline=False,
                             value=f"{vc.channel.name}" +
                                   (f" ({len(vc.channel.voice_states)}/{vc.channel.user_limit})"
                                    if vc.channel.user_limit else "") + f"\nID: {vc.channel.id}```"
@@ -4373,7 +4373,7 @@ class Music(commands.Cog):
     async def parse_song_request(self, message, text_channel, data, *, response=None, attachment: disnake.Attachment=None):
 
         if not message.author.voice:
-            raise GenericError("Você deve entrar em um canal de voz para pedir uma música.")
+            raise GenericError("Bạn phải nhập một kênh giọng nói để yêu cầu một bài hát.")
 
         can_connect(
             channel=message.author.voice.channel,
@@ -4385,7 +4385,7 @@ class Music(commands.Cog):
         try:
             if message.guild.me.voice.channel != message.author.voice.channel:
                 raise GenericError(
-                    f"Você deve entrar no canal <#{message.guild.me.voice.channel.id}> para pedir uma música.")
+                    f"Bạn phải vào kênh <#{message.guild.me.voice.channel.id}> Để đặt một bài hát.")
         except AttributeError:
             pass
 
@@ -4419,9 +4419,9 @@ class Music(commands.Cog):
                 if not await self.bot.fetch_invite(invite):
                     print(
                         f'{"-"*15}\n'
-                        f'Removendo invite: {invite} \n'
-                        f'Servidor: {message.guild.name} [{message.guild.id}]\n'
-                        f'Canal: {message.channel.name} [{message.channel.id}]\n'
+                        f'Loại bỏ lời mời: {invite} \n'
+                        f'Máy chủ: {message.guild.name} [{message.guild.id}]\n'
+                        f'Kênh: {message.channel.name} [{message.channel.id}]\n'
                         f'{"-" * 15}'
                     )
                     invite = None
@@ -4630,7 +4630,7 @@ class Music(commands.Cog):
 
                 try:
                     if bot.user.id != self.bot.user.id:
-                        embed.set_footer(text=f"Via: {bot.user.display_name}", icon_url=bot.user.display_avatar.url)
+                        embed.set_footer(text=f"Thông qua: {bot.user.display_name}", icon_url=bot.user.display_avatar.url)
                 except AttributeError:
                     pass
 
@@ -4657,7 +4657,7 @@ class Music(commands.Cog):
 
         if not node.restarting:
 
-            print(f"{self.bot.user} - [{node.identifier}] Conexão perdida - reconectando em {int(backoff)} segundos.")
+            print(f"{self.bot.user} - [{node.identifier}] Kết nối bị mất - kết nối lại trong {int(backoff)} giây.")
 
             for player in list(node.players.values()):
 
@@ -4668,7 +4668,7 @@ class Music(commands.Cog):
                     except:
                         try:
                             await player.text_channel.send(
-                                "O player foi finalizado por falta de servidores de música...",
+                                "Người chơi đã tắt vì thiếu máy chủ âm nhạc...",
                                 delete_after=11)
                         except:
                             pass
@@ -4687,7 +4687,7 @@ class Music(commands.Cog):
         while True:
 
             if retries == 30:
-                print(f"{self.bot.user} - [{node.identifier}] Todas as tentativas de reconectar falharam...")
+                print(f"{self.bot.user} - [{node.identifier}] Tất cả các nỗ lực để điều chỉnh lại thất bại...")
                 return
 
             await self.bot.wait_until_ready()
@@ -4703,8 +4703,8 @@ class Music(commands.Cog):
 
             backoff *= 1.5
             print(
-                f'{self.bot.user} - Falha ao reconectar no servidor [{node.identifier}] nova tentativa em {int(backoff)}'
-                f' segundos. Erro: {error}')
+                f'{self.bot.user} - Không kết nối lại với máy chủ [{node.identifier}] thử lại su {int(backoff)}'
+                f' giây.Lỗi: {error}')
             await asyncio.sleep(backoff)
             retries += 1
             continue
@@ -4730,10 +4730,10 @@ class Music(commands.Cog):
         else:
             print(
                 ("-" * 15) +
-                f"\nErro no canal de voz!"
+                f"\nLỗi kênh thoại!"
                 f"\nBot: {player.bot.user} [{player.bot.user.id}] | " + ("Online" if self.bot.is_ready() else "Offline") +
-                f"\nGuild: {player.guild.name} [{player.guild.id}]"
-                f"\nCanal: {vc.name} [{vc.id}]"
+                f"\nMáy chủ: {player.guild.name} [{player.guild.id}]"
+                f"\nKênh: {vc.name} [{vc.id}]"
                 f"\nServer: {player.node.identifier} | code: {payload.code} | reason: {payload.reason}\n" +
                 ("-" * 15)
             )
@@ -4765,11 +4765,11 @@ class Music(commands.Cog):
         if payload.code == 4014:
 
             if player.static:
-                player.command_log = "Desliguei o player por perca de conexão com o canal de voz."
+                player.command_log = "Tôi đã tắt trình phát vì mất kết nối với kênh thoại."
                 await player.destroy()
 
             else:
-                embed = disnake.Embed(description="**Desliguei o player por perca de conexão com o canal de voz.**",
+                embed = disnake.Embed(description="**Tôi đã tắt người chơi vì mất kết nối với kênh thoại.**",
                                       color=self.bot.get_color(player.guild.me))
                 try:
                     self.bot.loop.create_task(player.text_channel.send(embed=embed, delete_after=7))
@@ -4797,16 +4797,16 @@ class Music(commands.Cog):
 
         error_format = pprint.pformat(payload.data)
 
-        print(("-" * 50) + f"\nErro ao reproduzir a música: {track.uri or track.search_uri}\n"
+        print(("-" * 50) + f"\nLỗi khi chơi nhạc: {track.uri or track.search_uri}\n"
               f"Servidor: {player.node.identifier}\n"
               f"{error_format}\n" + ("-" * 50))
 
         if self.error_report_queue:
 
-            embed.description += f"\n**Servidor:** `{disnake.utils.escape_markdown(player.guild.name)} [{player.guild.id}]`"
+            embed.description += f"\n**Máy chủ:** `{disnake.utils.escape_markdown(player.guild.name)} [{player.guild.id}]`"
 
             try:
-                embed.description += f"\n**Canal:** `{disnake.utils.escape_markdown(player.guild.me.voice.channel.name)} [{player.guild.me.voice.channel.id}]`\n"
+                embed.description += f"\n**Kênh:** `{disnake.utils.escape_markdown(player.guild.me.voice.channel.name)} [{player.guild.me.voice.channel.id}]`\n"
             except:
                 pass
 
@@ -4828,7 +4828,7 @@ class Music(commands.Cog):
             else:
                 embed = disnake.Embed(
                     color=self.bot.get_color(player.guild.me),
-                    description="**O player foi finalizado por falta de servidores disponíveis.**"
+                    description="**Người chơi đã tắt vì thiếu máy chủ có sẵn.**"
                 )
                 await player.text_channel.send(embed=embed, delete_after=15)
                 await player.destroy(force=True)
@@ -4852,9 +4852,9 @@ class Music(commands.Cog):
                         n = await self.get_best_node()
                     except:
                         if player.static:
-                            player.set_command_log(text="O player foi desligado por falta de servidores de música...")
+                            player.set_command_log(text="Người chơi đã bị tắt vì thiếu máy chủ âm nhạc...")
                         else:
-                            await player.text_channel.send("**O player foi desligado por falta de servidores de música...**")
+                            await player.text_channel.send("**Người chơi đã bị tắt vì thiếu máy chủ âm nhạc...**")
                         await player.destroy()
                         return
                     await player.change_node(n.identifier)
@@ -4864,8 +4864,8 @@ class Music(commands.Cog):
 
                 player.queue.appendleft(player.last_track)
 
-                txt = "O servidor de música foi reiniciado para uma correção e a música será retomada em alguns " \
-                      "segundos (Por favor aguarde)..."
+                txt = "Máy chủ âm nhạc đã được khởi động lại để điều chỉnh và âm nhạc sẽ được nối lại trong một số " \
+                      "giây (vui lòng đợi)..."
 
                 for b in self.bot.pool.bots:
 
@@ -4916,11 +4916,11 @@ class Music(commands.Cog):
 
     @commands.Cog.listener("on_wavelink_node_ready")
     async def node_ready(self, node: wavelink.Node):
-        msg = f'{self.bot.user} - Servidor de música: [{node.identifier}] está pronto para uso!'
+        msg = f'{self.bot.user} - Máy chủ âm nhạc: [{node.identifier}] đã sẵn sàng!'
 
         if node.restarting:
 
-            print(msg + " Reconectando players...")
+            print(msg + " Kết nối lại người chơi...")
 
             node.restarting = False
 
@@ -4929,7 +4929,7 @@ class Music(commands.Cog):
                     player = node.players[guild_id]
                     await player.change_node(node.identifier, force=True)
                     player.set_command_log(
-                        text="O servidor de música foi reconectado com sucesso!",
+                        text="Máy chủ âm nhạc đã được kết nối lại thành công!",
                         emoji="🔰"
                     )
                     player.locked = False
@@ -4953,7 +4953,7 @@ class Music(commands.Cog):
 
         if not player.text_channel.permissions_for(player.guild.me).send_messages:
             try:
-                print(f"{player.guild.name} [{player.guild_id}] - Desligando player por falta de permissão para enviar "
+                print(f"{player.guild.name} [{player.guild_id}] - Chơi người chơi vì thiếu sự cho phép gửi "
                       f"mensagens no canal: {player.text_channel.name} [{player.text_channel.id}]")
             except Exception:
                 traceback.print_exc()
@@ -5028,12 +5028,12 @@ class Music(commands.Cog):
             backoff = 7
             retries = 1
 
-            print(f"{self.bot.user} - Iniciando servidor de música: {data['identifier']}")
+            print(f"{self.bot.user} - Máy chủ âm nhạc bắt đầu: {data['identifier']}")
 
             while not self.bot.is_closed():
                 if retries >= max_retries:
                     print(
-                        f"{self.bot.user} - Todas as tentativas de conectar ao servidor [{data['identifier']}] falharam.")
+                        f"{self.bot.user} - Tất cả các nỗ lực kết nối với máy chủ [{data['identifier']}] falharam.")
                     return
                 else:
                     try:
@@ -5120,7 +5120,7 @@ class Music(commands.Cog):
                             continue
 
                     if not node_search:
-                        raise GenericError("**Não há servidores de música disponível.**")
+                        raise GenericError("**Không có máy chủ âm nhạc có sẵn.**")
 
         if not tracks:
             raise GenericError("Não houve resultados para sua busca.")
@@ -5164,17 +5164,16 @@ class Music(commands.Cog):
         embed = disnake.Embed(color=self.bot.get_color(thread.guild.me))
 
         if self.bot.intents.message_content:
-            embed.description = "**Essa conversa será usada temporariamente para pedir músicas apenas enviando " \
-                                "o nome/link sem necessidade de usar comando.**"
+            embed.description = "**Bạn chỉ cần ném linh hoặc tên của bài hát vào đây là tui sẽ tự thêm cho bạn**" \
 
         elif not player.controller_mode:
-            embed.description = "**A skin/aparência atual não é compatível com o sistem de song-request " \
-                               "via thread/conversa\n\n" \
-                               "Nota:** `Esse sistema requer uma skin que use botões.`"
+            embed.description = "**Vùng da/hiện tại không tương thích với hệ thống yêu cầu bài hát " \
+                               "thông qua chủ đề/cuộc trò chuyện\n\n" \
+                               "Lưu ý: ** `Hệ thống này yêu cầu một làn da sử dụng các nút.`"
 
         else:
-            embed.description = "**Aviso! Não estou com a intent de message_content ativada por meu desenvolvedor...\n" \
-                                "A funcionalidade de pedir música aqui pode não ter um resultado esperado...**"
+            embed.description = "**Để ý!Tôi không có ý định của message_content được kích hoạt bởi nhà phát triển của tôi...\n" \
+                                "Chức năng yêu cầu âm nhạc ở đây có thể không có kết quả dự kiến...**"
 
         await thread.send(embed=embed)
 
@@ -5315,7 +5314,7 @@ class Music(commands.Cog):
                     await node.connect(bot)
                 return node
 
-            raise GenericError("**Não há servidores de música disponível.**")
+            raise GenericError("**Không có máy chủ âm nhạc có sẵn.**")
 
     async def error_report_loop(self):
 
