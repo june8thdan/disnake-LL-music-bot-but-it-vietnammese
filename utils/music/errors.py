@@ -106,7 +106,7 @@ def parse_error(
         error_txt = "**Bạn phải ở trên kênh thoại hiện tại của tôi để sử dụng lệnh này.**"
 
     elif isinstance(error, NoSource):
-        error_txt = "**Hôm nay không có bài hát nào về người chơi.**"
+        error_txt = "**Không có nguồn**"
 
     elif isinstance(error, NoVoice):
         error_txt = "**Bạn phải vào một kênh thoại để sử dụng lệnh này.**"

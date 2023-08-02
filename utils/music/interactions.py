@@ -20,20 +20,20 @@ class VolumeInteraction(disnake.ui.View):
 
         opts = []
 
-        for l in [5, 20, 40, 60, 80, 100, 120, 150]:
-
+        for l in [5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 101, 120, 150]:
+            
             if l > 100:
-                description = "Acima de 100% o audio pode ficar bem ruim."
+                description = "Trên 100% âm thanh có thể rất tệ."
             else:
                 description = None
             opts.append(disnake.SelectOption(label=f"{l}%", value=f"vol_{l}", description=description))
 
-        select = disnake.ui.Select(placeholder='Nível:', options=opts)
+        select = disnake.ui.Select(placeholder='Mức:', options=opts)
         select.callback = self.callback
         self.add_item(select)
 
     async def callback(self, interaction: disnake.MessageInteraction):
-        await interaction.response.edit_message(content=f"Volume alterado!",embed=None, view=None)
+        await interaction.response.edit_message(content=f"Đã thay đổi âm lượng!",embed=None, view=None)
         self.volume = int(interaction.data.values[0][4:])
         self.stop()
 
@@ -74,7 +74,7 @@ class QueueInteraction(disnake.ui.View):
                 duration = time_format(t.duration) if not t.is_stream else '🔴 Livestream'
 
                 txt += f"`┌ {counter})` [`{fix_characters(t.title, limit=50)}`]({t.uri})\n" \
-                       f"`└ ⏲️ {duration}`" + (f" - `Repetições: {t.track_loops}`" if t.track_loops else  "") + \
+                       f"`└ ⏲️ {duration}`" + (f" - `Lặp lại: {t.track_loops}`" if t.track_loops else  "") + \
                        f" **|** `✋` <@{t.requester}>\n"
 
                 opts.append(
@@ -90,7 +90,7 @@ class QueueInteraction(disnake.ui.View):
             self.select_pages.append(opts)
 
         track_select = disnake.ui.Select(
-            placeholder="Tocar uma música específica da página:",
+            placeholder="Phát một bài hát cụ thể trên trang:",
             options=self.select_pages[self.current],
             custom_id="queue_track_selection",
             max_values=1
@@ -120,7 +120,7 @@ class QueueInteraction(disnake.ui.View):
         stop_interaction.callback = self.stop_interaction
         self.add_item(stop_interaction)
 
-        update_q = disnake.ui.Button(emoji='🔄', label="Refresh", style=disnake.ButtonStyle.grey)
+        update_q = disnake.ui.Button(emoji='🔄', label="Làm mới", style=disnake.ButtonStyle.grey)
         update_q.callback = self.update_q
         self.add_item(update_q)
 
@@ -133,7 +133,7 @@ class QueueInteraction(disnake.ui.View):
             return
 
         embed = self.message.embeds[0]
-        embed.set_footer(text="Tempo para interagir esgotado!")
+        embed.set_footer(text="Thời gian để tương tác kiệt sức!")
 
         for c in self.children:
             c.disabled = True
@@ -142,7 +142,7 @@ class QueueInteraction(disnake.ui.View):
 
 
     def update_embed(self):
-        self.embed.title = f"**Músicas da fila [{self.current+1} / {self.max_page+1}]**"
+        self.embed.title = f"**Bài hát Fila [{self.current+1} / {self.max_page+1}]**"
         self.embed.description = self.pages[self.current]
         self.children[2].options = self.select_pages[self.current]
 
@@ -162,7 +162,7 @@ class QueueInteraction(disnake.ui.View):
                 break
 
         if not track:
-            await interaction.send(f"Música com id \"{track_id}\" não encontrada na fila do player...", ephemeral=True)
+            await interaction.send(f"Âm nhạc như id \"{track_id}\" Không tìm thấy trong dòng người chơi...", ephemeral=True)
             return
 
         command = self.bot.get_slash_command("skip")
@@ -210,7 +210,7 @@ class QueueInteraction(disnake.ui.View):
 
     async def stop_interaction(self, interaction: disnake.MessageInteraction):
 
-        await interaction.response.edit_message(content="Queue fechada", embed=None, view=None)
+        await interaction.response.edit_message(content="Đóng", embed=None, view=None)
         self.stop()
 
     async def update_q(self, interaction: disnake.MessageInteraction):
@@ -239,7 +239,7 @@ class SelectInteraction(disnake.ui.View):
 
         self.clear_items()
 
-        select_menu = disnake.ui.Select(placeholder='Selecione uma opção:', options=self.item_pages[self.current_page])
+        select_menu = disnake.ui.Select(placeholder='Chọn một tùy chọn:', options=self.item_pages[self.current_page])
         select_menu.callback = self.callback
         self.add_item(select_menu)
         self.selected = self.item_pages[self.current_page][0].value
@@ -254,7 +254,7 @@ class SelectInteraction(disnake.ui.View):
             next_button.callback = self.next_callback
             self.add_item(next_button)
 
-        button = disnake.ui.Button(label="Cancelar", emoji="❌")
+        button = disnake.ui.Button(label="Hủy bỏ", emoji="❌")
         button.callback = self.cancel_callback
         self.add_item(button)
 
@@ -263,7 +263,7 @@ class SelectInteraction(disnake.ui.View):
         if interaction.user.id == self.user.id:
             return True
 
-        await interaction.send(f"Apenas {self.user.mention} pode interagir aqui.", ephemeral = True)
+        await interaction.send(f"Chỉ {self.user.mention} mới có thể tương tác ở đây.", ephemeral = True)
 
     async def back_callback(self, interaction: disnake.MessageInteraction):
         if self.current_page == 0:
@@ -303,18 +303,18 @@ class AskView(disnake.ui.View):
     async def interaction_check(self, interaction: disnake.MessageInteraction) -> bool:
 
         if interaction.user != self.ctx.author:
-            await interaction.send("Você não pode usar este botão!", ephemeral=True)
+            await interaction.send("Bạn không thể sử dụng nút này!", ephemeral=True)
             return False
 
         return True
 
-    @disnake.ui.button(label="Sim", emoji="✅")
+    @disnake.ui.button(label="Đồng ý", emoji="✅")
     async def allow(self, button, interaction: disnake.MessageInteraction):
         self.selected = True
         self.interaction_resp = interaction
         self.stop()
 
-    @disnake.ui.button(label="Não", emoji="❌")
+    @disnake.ui.button(label="KHÔNG", emoji="❌")
     async def deny(self, button, interaction: disnake.MessageInteraction):
         self.selected = False
         self.interaction_resp = interaction

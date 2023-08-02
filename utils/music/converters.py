@@ -81,21 +81,21 @@ def time_format(milliseconds: Union[int, float], use_names: bool = False) -> str
         times = []
 
         for time_, name in (
-                (days, "dia"),
-                (hours, "hora"),
-                (minutes, "minuto"),
-                (seconds, "segundo")
+                (days, "ngày"),
+                (hours, "giờ"),
+                (minutes, "phút"),
+                (seconds, "giây")
         ):
             if not time_:
                 continue
 
-            times.append(f"{time_} {name}" + ("s" if time_ > 1 else ""))
+            times.append(f"{time_} {name}")
 
         try:
             last_time = times.pop()
         except IndexError:
             last_time = None
-            times = ["1 segundo"]
+            times = ["1 giây"]
 
         strings = ", ".join(t for t in times)
 
@@ -110,7 +110,7 @@ def time_format(milliseconds: Union[int, float], use_names: bool = False) -> str
             strings = f"{hours}:{strings}"
 
         if days:
-            strings = (f"{days} dias" if days > 1 else f"{days} dia") + (f", {strings}" if strings != "00:00" else "")
+            strings = (f"{days} ngày" if days > 1 else f"{days} ngày") + (f", {strings}" if strings != "00:00" else "")
 
     return strings
 
@@ -152,47 +152,47 @@ def music_source_image(sourcename):
 
 
 perms_translations = {
-    "add_reactions": "Adicionar Reações",
-    "administrator": "Administrador",
-    "attach_files": "Anexar Arquivos",
-    "ban_members": "Banir Membros",
-    "change_nickname": "Alterar apelido",
-    "connect": "Conectar em canal de voz",
-    "create_instant_invite": "Criar convite instantâneo",
-    "create_private_threads": "Criar Tópicos Privado",
-    "create_public_threads": "Criar Tópicos Públicos",
-    "deafen_members": "Ensurdecer membros",
-    "embed_links": "Embutir links",
-    "kick_members": "Expulsar Membros",
-    "manage_channels": "Gerenciar Canais",
-    "manage_emojis_and_stickers": "Gerenciar Emojis e Figurinhas",
-    "manage_events": "Gerenciar Eventos",
-    "manage_guild": "Gerenciar Servidor",
-    "manage_messages": "Gerenciar Mensagens",
-    "manage_nicknames": "Gerenciar Apelidos",
-    "manage_roles": "Gerenciar Cargos",
-    "manage_threads": "Gerenciar Tópicos",
-    "manage_webhooks": "Gerenciar Webhooks",
-    "mention_everyone": "Marcar @everyone e @here",
-    "moderate_members": "Moderar membros",
-    "move_members": "Mover membros",
-    "mute_members": "Silenciar membros",
-    "priority_speaker": "Prioridade para falar",
-    "read_message_history": "Mostrar histórico de mensagens",
-    "request_to_speak": "Pedir para falar",
-    "send_messages": "Enviar mensagem",
-    "send_messages_in_threads": "Enviar mensagem em tópicos",
-    "send_tts_messages": "Enviar mensagens de texto-a-voz",
-    "speak": "Falar em canal de voz",
-    "stream": "Transmitir",
-    "use_application_commands": "Usar comandos de aplicações/bots",
-    "use_embedded_activities": "Usar atividades ",
-    "use_external_emojis": "Usar Emojis Externos",
-    "use_external_stickers": "Usar Figurinhas Externas",
-    "use_voice_activation": "Usar detecção de voz automática",
-    "view_audit_log": "Visualizar registro de auditória",
-    "view_channel": "Ver canal",
-    "view_guild_insights": "Ver análises do servidor"
+    "add_reactions": "Thêm phản ứng ",
+    "administrator": "Người quản lý",
+    "attach_files": "Đính kèm tệp",
+    "ban_members": "Ban thành viên",
+    "change_nickname": "Thay đổi biệt danh",
+    "connect": "Kết nối với kênh thoại",
+    "create_instant_invite": "Tạo lời mời tức thì",
+    "create_private_threads": "Tạo các chủ đề riêng tư",
+    "create_public_threads": "Tạo các chủ đề công cộng",
+    "deafen_members": "Thành viên điếc",
+    "embed_links": "Liên kết nhúng",
+    "kick_members": "Trục xuất thành viên",
+    "manage_channels": "Quản lý các kênh",
+    "manage_emojis_and_stickers": "Quản lý biểu tượng cảm xúc và nhãn dán",
+    "manage_events": "Quản lý các sự kiện",
+    "manage_guild": "Quản lý máy chủ",
+    "manage_messages": "Quản lý tin nhắn",
+    "manage_nicknames": "Quản lý biệt danh",
+    "manage_roles": "Quản lý vị trí",
+    "manage_threads": "Quản lý các chủ đề",
+    "manage_webhooks": "Quản lý webhooks",
+    "mention_everyone": "Đề cập @everyone và @here",
+    "moderate_members": "Quản lí thành viên",
+    "move_members": "Di chuyển các thành viên",
+    "mute_members": "Các thành viên im lặng",
+    "priority_speaker": "Ưu tiên nói",
+    "read_message_history": "Hiển thị lịch sử tin nhắn",
+    "request_to_speak": "Yêu cầu nói",
+    "send_messages": "Gửi tin nhắn",
+    "send_messages_in_threads": "Gửi tin nhắn đến các chủ đề",
+    "send_tts_messages": "Gửi tin nhắn văn bản-a-foster",
+    "speak": "Lời nói",
+    "stream": "Để truyền tải",
+    "use_application_commands": "Sử dụng lệnh Ứng dụng/bot",
+    "use_embedded_activities": "Sử dụng các hoạt động ",
+    "use_external_emojis": "Sử dụng biểu tượng cảm xúc bên ngoài",
+    "use_external_stickers": "Sử dụng nhãn dán bên ngoài",
+    "use_voice_activation": "Sử dụng phát hiện giọng nói tự động",
+    "view_audit_log": "Xem Đăng ký Thính phòng",
+    "view_channel": "Xem kênh",
+    "view_guild_insights": "Xem phân tích máy chủ"
 }
 
 

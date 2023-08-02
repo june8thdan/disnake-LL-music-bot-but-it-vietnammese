@@ -381,19 +381,19 @@ class LavalinkPlayer(wavelink.Player):
         self.prefix_info = kwargs.pop("prefix", "")
 
         self.initial_hints = [
-            f"Você pode alterar a skin/aparência do player usando o comando /change_skin ou {self.prefix_info}skin "
-            f"(Apenas membros com permissão de gerenciar servidor pode usar esse comando).",
+            f"Bạn có thể thay đổi làn da/sự xuất hiện của người chơi bằng cách sử dụng lệnh /change_skin hoặc {self.prefix_info}skin "
+            f"(Chỉ các thành viên có quyền quản lý máy chủ mới có thể sử dụng lệnh này).",
 
-            f"Vcoê pode criar links favoritos para ter fácil acesso usá-los no comando /play ou {self.prefix_info}play "
-            f"sem ter necessidade de copiar e colar os links no comando. Experimente usando o comando /fav_manager ou "
+            f"Bạn có thể tạo các liên kết yêu thích để có quyền truy cập dễ dàng để sử dụng chúng trong lệnh /play hoặc {self.prefix_info}play "
+            f"mà không phải sao chép và dán các liên kết phụ trách.Thử sử dụng lệnh /fav_manager hoặc "
             f"{self.prefix_info}favmanager.",
         ]
 
         if self.bot.config["USE_YTDL"] or self.bot.spotify:
             self.initial_hints.append(
-                "Você pode adicionar/integrar link de canais e perfis do youtube, soundcloud e spotify para tocar "
-                "uma playlist pública que tem nesses canais/perfis de forma bem conveniente. "
-                f"Experimente usando o comando /integrations ou {self.prefix_info}integrations."
+                "Bạn có thể thêm/tích hợp YouTube, SoundCloud và Spotify Kênh và Hồ sơ để chơi "
+                "một danh sách phát công khai có trong các kênh/hồ sơ này một cách rất thuận tiện. "
+                f"Thử sử dụng lệnh /integrations hoặc {self.prefix_info}integrations."
             )
 
         try:
@@ -413,7 +413,7 @@ class LavalinkPlayer(wavelink.Player):
         self.bot.dispatch("player_create", player=self)
 
     def __str__(self) -> str:
-        return f"Servidor de música atual: {self.node.identifier}"
+        return f"Máy chủ âm nhạc hiện tại: {self.node.identifier}"
 
     def __repr__(self):
         return f"<volume={self.volume} " \
@@ -493,23 +493,23 @@ class LavalinkPlayer(wavelink.Player):
         hints = list(self.initial_hints)
 
         if self.static:
-            hints.append("É possível fixar músicas/playlists na mensagem do player quando tiver no modo de "
-                         "espera/oscioso pra permitir membros ouvi-las de forma pública. Pra isso use o "
-                         f"comando /server_playlist ou {self.prefix_info}serverplaylist (apenas membros com permissão de gerenciar "
-                         "servidor pode usar esse comando).")
+            hints.append("Bạn có thể sửa chữa danh sách nhạc/phát trong tin nhắn người chơi khi bạn có "
+                         "Espera/Ososo để cho phép các thành viên nghe họ công khai.Để sử dụng "
+                         f"yêu cầu /server_playlist hoặc {self.prefix_info}serverplaylis(Chỉ các thành viên có quyền quản lýar "
+                         "Máy chủ có thể sử dụng lệnh này).")
 
         elif self.bot.intents.message_content and self.controller_mode:
-            hints.append("Ao criar uma conversa/thread na mensagem do player, será ativado o modo de song-request "
-                         "nela (possibilitando pedir música apenas enviando o nome/link da música na conversa).")
+            hints.append("Khi tạo một cuộc trò chuyện/chủ đề trong thông báo người chơi, chế độ yêu cầu bài hát sẽ được kích hoạt "
+                         "Trong đó (cho phép yêu cầu âm nhạc chỉ bằng cách gửi tên/liên kết của bài hát trong cuộc trò chuyện).")
 
         if len([b for b in self.bot.pool.bots if b.appinfo and b.appinfo.bot_public]) > 1:
-            hints.append("É possível ter bots de música adicionais no servidor compartilhando todos os seus favoritos/"
-                         "integrações e funcionando com um único prefixo e comando slash de apenas um bot. "
-                         f"Você pode usar o comando /invite ou {self.prefix_info}invite para adicioná-los.")
+            hints.append("Bạn có thể có các bot nhạc bổ sung trên máy chủ bằng cách chia sẻ tất cả các mục yêu thích của bạn/"
+                         "Tích hợp và làm việc với một tiền tố và lệnh chém duy nhất chỉ có một bot. "
+                         f"Bạn có thể sử dụng lệnh /invite hoặc {self.prefix_info}invite để thêm chúng.")
 
         if self.controller_mode:
             hints.append(
-                "Ao clicar nesse emoji 🎛️ das mensagens de alguns comandos você será redirecionado para o player-controller."
+                "Bằng cách nhấp vào biểu tượng cảm xúc này 🎛️ Từ các tin nhắn của một số lệnh, bạn sẽ được chuyển hướng đến người chơi kiểm soát."
             )
 
         random.shuffle(hints)
@@ -534,7 +534,7 @@ class LavalinkPlayer(wavelink.Player):
         if check:
 
             if update_log:
-                self.set_command_log(emoji="🔰", text="A música foi retomada da pausa automática.")
+                self.set_command_log(emoji="🔰", text="Bài hát được nối lại từ Break tự động.")
                 if self.current:
                     await self.invoke_np(rpc_update=True)
                 else:
@@ -552,13 +552,13 @@ class LavalinkPlayer(wavelink.Player):
             await self.set_pause(True)
 
             self.auto_pause = True
-            self.set_command_log(text=f"O player foi pausado por falta de membros no canal. A "
-                                      f"música será retomada automaticamente quando um membro entrar no canal "
+            self.set_command_log(text=f"Người chơi bị tạm dừng vì thiếu thành viên trên kênh.MỘT "
+                                      f"Âm nhạc sẽ được tiếp tục tự động khi một thành viên vào kênh "
                                       f"<#{self.channel_id}>.", emoji="⚠️")
             await self.invoke_np()
 
         else:
-            msg = f"**O player foi desligado por falta de membros no canal" + (f"<#{self.guild.me.voice.channel.id}>"
+            msg = f"**Người chơi đã bị tắt vì thiếu thành viên trên kênh" + (f"<#{self.guild.me.voice.channel.id}>"
                                                                                if self.guild.me.voice else '') + "...**"
             self.command_log = msg
             if not self.static and not self.has_thread:
@@ -650,16 +650,16 @@ class LavalinkPlayer(wavelink.Player):
                 self.locked = False
 
                 if isinstance(exception, wavelink.TrackLoadError):
-                    error_msg = f"**Causa:** ```java\n{exception.cause}```\n" \
-                                f"**Mensagem:** `\n{exception.message}`\n" \
-                                f"**Nível:** `{exception.severity}`\n" \
-                                f"**Servidor de música:** `{self.node.identifier}`"
+                    error_msg = f"**Gây ra:** ```java\n{exception.cause}```\n" \
+                                f"**Tin nhắn:** `\n{exception.message}`\n" \
+                                f"**Mức độ:** `{exception.severity}`\n" \
+                                f"**Máy chủ âm nhạc:** `{self.node.identifier}`"
                 else:
-                    error_msg = f"**Detalhes:** ```py\n{repr(exception)}```"
+                    error_msg = f"**Chi tiết:** ```py\n{repr(exception)}```"
 
                 try:
                     embed = disnake.Embed(
-                        description=f"**Falha ao obter dados do autoplay:\n"
+                        description=f"**Không lấy được dữ liệu autoplay:\n"
                                     f"[{track.title}]({track.uri or track.search_uri})**\n"
                                     f"{error_msg}",
                         color=disnake.Colour.red())
@@ -759,7 +759,7 @@ class LavalinkPlayer(wavelink.Player):
                     try:
                         await self.text_channel.send(
                             embed=disnake.Embed(
-                                description=f"Houve um problema ao tentar processar a música [{track.title}]({track.uri})... "
+                                description=f"Có một vấn đề khi cố gắng xử lý âm nhạc [{track.title}]({track.uri})... "
                                             f"```py\n{repr(e)}```",
                                 color=self.bot.get_color()
                             )
@@ -776,8 +776,8 @@ class LavalinkPlayer(wavelink.Player):
                 try:
                     await self.text_channel.send(
                         embed=disnake.Embed(
-                            description=f"A música [{track.title}]({track.uri}) não está disponível...\n"
-                                        f"Pulando para a próxima música...",
+                            description=f"Bài hát [{track.title}]({track.uri}) Không có sẵn...\n"
+                                        f"Nhảy đến bài hát tiếp theo...",
                             color=self.bot.get_color()
                         ), delete_after=30
                     )
@@ -797,8 +797,8 @@ class LavalinkPlayer(wavelink.Player):
                 try:
                     await self.text_channel.send(
                         embed=disnake.Embed(
-                            description=f"A música [{track.title}]({track.uri}) não está disponível...\n"
-                                        f"Pulando para a próxima música...",
+                            description=f"Bài hát [{track.title}]({track.uri}) Không có sẵn...\n"
+                                        f"Nhảy đến bài hát tiếp theo...",
                             color=self.bot.get_color()
                         ), delete_after=30
                     )
@@ -849,11 +849,11 @@ class LavalinkPlayer(wavelink.Player):
                                   'play', 'back', 'readd_songs', 'stop'])
 
                 embed = disnake.Embed(
-                    description=f"**As músicas acabaram... Use um dos comandos abaixo para adicionar músicas ou parar "
-                                f"o player.**\n\n`{cmds}`\n\n"
-                                f"**Nota:** `O Player será desligado automaticamente` "
+                    description=f"**Các bài hát đã kết thúc ... Sử dụng một trong các lệnh bên dưới để thêm các bài hát hoặc dừng lại "
+                                f"o người chơi.**\n\n`{cmds}`\n\n"
+                                f"** Lưu ý: ** `Người chơi sẽ tự động tắt` "
                                 f"<t:{int((disnake.utils.utcnow() + datetime.timedelta(seconds=self.idle_timeout)).timestamp())}:R> "
-                                f"`caso nenhum comando seja usado...`",
+                                f"`Nếu không có lệnh được sử dụng...`",
                     color=self.bot.get_color(self.guild.me)
                 )
 
@@ -867,41 +867,41 @@ class LavalinkPlayer(wavelink.Player):
 
         controller_opts = [
             disnake.SelectOption(
-                emoji="<:add_music:588172015760965654>", value=PlayerControls.add_song, label="Adicionar música",
-                description=f"Tocar nova música/playlist."
+                emoji="<:add_music:588172015760965654>", value=PlayerControls.add_song, label="Thêm âm nhạc",
+                description=f"Phát nhạc/danh sách phát mới."
             ),
             disnake.SelectOption(
-                emoji="⭐", value=PlayerControls.enqueue_fav, label="Adicionar favorito",
-                description=f"Adicionar favorito na fila."
+                emoji="⭐", value=PlayerControls.enqueue_fav, label="Thêm yêu thích",
+                description=f"Thêm yêu thích trong dòng."
             ),
         ]
 
         if (played := len(self.played)) or self.last_track:
             controller_opts.append(
                 disnake.SelectOption(
-                    emoji="⏮️", value=PlayerControls.back, label="Voltar",
-                    description=f"Ouvir novamente: {self.played[-1].title[:31]}"
+                    emoji="⏮️", value=PlayerControls.back, label="Quay trở lại",
+                    description=f"Lắng nghe một lần nữa: {self.played[-1].title[:31]}"
                 )
             )
 
         if played > 1:
             controller_opts.append(
                 disnake.SelectOption(
-                    emoji="↪️", value=PlayerControls.readd, label="Tocar novamente",
-                    description=f"Tocar todas as músicas novamente ({played})"
+                    emoji="↪️", value=PlayerControls.readd, label="Chơi lại toàn bộ bài hát đã phát",
+                    description=f"Chơi lại tất cả các bài hát ({played})"
                 )
             )
 
         controller_opts.append(
             disnake.SelectOption(
-                emoji="🛑", value=PlayerControls.stop, label="Finalizar",
-                description=f"Finalizar o player e me desconectar do canal."
+                emoji="🛑", value=PlayerControls.stop, label="Dừng lại",
+                description=f"Kết thúc người chơi và ngắt kết nối tôi khỏi kênh."
             ),
         )
 
         components = [
             disnake.ui.Select(
-                placeholder="Executar uma ação:", options=controller_opts,
+                placeholder="Thực hiện một hành động:", options=controller_opts,
                 custom_id="musicplayer_dropdown_idle", min_values=0, max_values=1
             )
         ]
@@ -915,16 +915,16 @@ class LavalinkPlayer(wavelink.Player):
 
             components.append(
                 disnake.ui.Select(
-                    placeholder="Tocar música/playlist do servidor.",
+                    placeholder="Phát nhạc/danh sách phát máy chủ.",
                     options=opts, custom_id="player_guild_pin"
                 )
             )
 
         embed = disnake.Embed(
-            description=f"**Não há músicas na fila... Adicione uma música ou use uma das opções abaixo.\n\n"
-                        f"Nota:** `O Player será desligado automaticamente` "
+            description=f"**Không có bài hát nào trong dòng ... Thêm một bài hát hoặc sử dụng một trong các tùy chọn bên dưới.\n\n"
+                        f"Lưu ý: ** `Người chơi sẽ tự động tắt ' "
                         f"<t:{int((disnake.utils.utcnow() + datetime.timedelta(seconds=self.idle_timeout)).timestamp())}:R> "
-                        f"`caso nenhuma ação seja executada...`",
+                        f"`Nếu không có hành động được thực hiện...`",
             color=self.bot.get_color(self.guild.me)
         )
 
@@ -937,7 +937,7 @@ class LavalinkPlayer(wavelink.Player):
 
         try:
             if isinstance(self.text_channel.parent, disnake.ForumChannel) and self.static:
-                kwargs["content"] = "💤 Aguardando por novas músicas..."
+                kwargs["content"] = "💤 Chờ đợi những bài hát mới..."
         except:
             pass
 
@@ -970,7 +970,7 @@ class LavalinkPlayer(wavelink.Player):
 
         await asyncio.sleep(self.idle_timeout)
 
-        msg = "💤 **⠂O player foi desligado por inatividade...**"
+        msg = "💤 **⠂Người chơi đã bị tắt bởi không hoạt động...**"
 
         if self.static or self.has_thread:
             self.command_log = msg
@@ -1002,7 +1002,7 @@ class LavalinkPlayer(wavelink.Player):
             return
 
         if not self.current:
-            msg = "Status: Aguardando por novas músicas."
+            msg = "Tình trạng: Chờ các bài hát mới."
 
         else:
 
@@ -1233,7 +1233,7 @@ class LavalinkPlayer(wavelink.Player):
                         traceback.print_exc()
                         if self.static or self.has_thread:
                             self.set_command_log(
-                                f"{(interaction.author.mention + ' ') if interaction else ''}houve um erro na interação: {repr(e)}", "⚠️")
+                                f"{(interaction.author.mention + ' ') if interaction else ''}Có một lỗi trong tương tác: {repr(e)}", "⚠️")
                             self.update = True
                             return
 
@@ -1369,7 +1369,7 @@ class LavalinkPlayer(wavelink.Player):
                         await channel.edit(archived=True, locked=True)
                     except Exception:
                         print(
-                            f"Falha ao arquivar thread do servidor: {self.guild.name}\n{traceback.format_exc()}")
+                            f"Thất bại khi lưu trữ luồng máy chủ: {self.guild.name}\n{traceback.format_exc()}")
 
                 elif inter:
 
@@ -1380,9 +1380,9 @@ class LavalinkPlayer(wavelink.Player):
                             color=self.bot.get_color(self.guild.me)),
                         components=[
                             disnake.ui.Button(
-                                label="Pedir uma música", emoji="🎶", custom_id=PlayerControls.add_song),
+                                label="Yêu cầu một bài hát", emoji="🎶", custom_id=PlayerControls.add_song),
                             disnake.ui.Button(
-                                label="Tocar favorito/integração", emoji="⭐", custom_id=PlayerControls.enqueue_fav)
+                                label="Yêu thích/tích hợp", emoji="⭐", custom_id=PlayerControls.enqueue_fav)
 
                         ]
                     )
