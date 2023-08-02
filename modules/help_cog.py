@@ -265,7 +265,7 @@ class HelpCog(commands.Cog, name="Ajuda"):
 
             elif not cmd.cog or not hasattr(cmd.cog, 'name'):
                 if not "🔰" in cmdlst:
-                    cmdlst["🔰"] = ("Một số", [])
+                    cmdlst["🔰"] = ("Các lệnh xàm lul", [])
                 cmdlst["🔰"][1].append(cmd)
 
             else:
@@ -359,7 +359,7 @@ class HelpCog(commands.Cog, name="Ajuda"):
                 index = 0
         else:
             cog = ctx.bot.get_cog(cmd.cog_name)
-            name = cog.name if hasattr(cog, "name") else "Một số"
+            name = cog.name if hasattr(cog, "name") else "Các lệnh xàm lul"
             emoji = cog.emoji if hasattr(cog, "emoji") else "🔰"
 
             cmds = [c for c in sorted(cog.get_commands(), key=lambda cm: cm.name) if await check_perms(ctx, c) or not c.hidden]
