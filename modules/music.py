@@ -512,8 +512,8 @@ class Music(commands.Cog):
         except KeyError:
             print(f"Player debug test 20: {bot.user} | {self.bot.user}")
             raise GenericError(
-                f"**O player do bot {bot.user.mention} foi finalizado antes de conectar no canal de voz "
-                f"(ou o player não foi inicializado)...\nPor via das dúvidas tente novamente.**"
+                f"**người chơi của bot {bot.user.mention} đã bị chấm dứt trước khi kết nối với kênh thoại "
+                 f"(hoặc trình phát chưa được khởi chạy)...\nĐể đề phòng, hãy thử lại.**"
             )
 
         can_connect(channel, me.guild, check_other_bots_in_vc=check_other_bots_in_vc, bot=bot)
@@ -531,8 +531,8 @@ class Music(commands.Cog):
 
             if channel != me.voice and me.voice.channel:
                 txt = [
-                    f"me moveu para o canal <#{channel.id}>",
-                    f"**Movido com sucesso para o canal** <#{channel.id}>"
+                    f"đã chuyển tôi đến kênh <#{channel.id}>",
+                    f"**Đã chuyển thành công sang kênh** <#{channel.id}>"
                 ]
 
                 deafen_check = False
@@ -540,8 +540,8 @@ class Music(commands.Cog):
 
             else:
                 txt = [
-                    f"me conectou no canal <#{channel.id}>",
-                    f"**Conectei no canal** <#{channel.id}>"
+                    f"đã kết nối tôi với kênh <#{channel.id}>",
+                    f"**Tôi đã kết nối với kênh** <#{channel.id}>"
                 ]
 
             await self.interaction_message(ctx, txt, emoji="🔈", rpc_update=True)
@@ -569,11 +569,11 @@ class Music(commands.Cog):
             if not await check_deafen(me):
                 await text_channel.send(
                     embed=disnake.Embed(
-                        title="Aviso:",
-                        description="Para manter sua privacidade e me ajudar a economizar "
-                                    "recursos, recomendo desativar meu áudio do canal clicando "
-                                    "com botão direito sobre mim e em seguida marcar: desativar "
-                                    "áudio no servidor.",
+                        title="Để ý:",
+                        description="Để duy trì quyền riêng tư của bạn và giúp tôi tiết kiệm tài nguyên"
+                                     "các tính năng, tôi khuyên bạn nên tắt âm thanh kênh của mình bằng cách nhấp vào"
+                                     "Nhấp chuột phải vào tôi và sau đó đánh dấu: vô hiệu hóa"
+                                     "âm thanh trên máy chủ.",
                         color=self.bot.get_color(me),
                     ).set_image(
                         url="https://cdn.discordapp.com/attachments/554468640942981147/1012533546386210956/unknown.png"
@@ -592,12 +592,12 @@ class Music(commands.Cog):
             else:
                 embed = disnake.Embed(color=self.bot.get_color(me))
 
-                embed.description = f"**Preciso que algum staff me convide para falar no palco: " \
+                embed.description = f"**Tôi cần một số nhân viên mời tôi phát biểu trên sân khấu: " \
                                     f"[{channel.name}]({channel.jump_url}).**"
 
                 embed.set_footer(
-                    text="💡 Dica: para me permitir falar no palco automaticamente será necessário me conceder "
-                         "permissão de silenciar membros (no servidor ou apenas no canal de palco escolhido).")
+                    text="💡 Gợi ý: để cho phép tôi tự động phát biểu trên sân khấu, bạn cần cấp cho tôi "
+                          "quyền tắt tiếng thành viên (trên máy chủ hoặc chỉ trên kênh sân khấu đã chọn).")
 
                 await text_channel.send(ctx.author.mention, embed=embed, delete_after=45)
 
@@ -858,7 +858,7 @@ class Music(commands.Cog):
                 embed = disnake.Embed(
                     color=self.bot.get_color(guild.me),
                     description="**Chọn một yêu thích hoặc tích hợp dưới đây:**\n"
-                                f'Lưu ý: bạn chỉ có <t:{int((disnake.utils.utcnow() + datetime.timedelta(seconds=45)).timestamp())}:R> chọn!'
+                                f'Lưu ý: bạn chỉ có <t:{int((disnake.utils.utcnow() + datetime.timedelta(seconds=45)).timestamp())}:R> để chọn!'
                 )
 
                 try:
@@ -993,7 +993,7 @@ class Music(commands.Cog):
 
                     embed = disnake.Embed(
                         description="**Chọn một danh sách phát bên dưới:**\n"
-                                    f'Chọn một tùy chọn theo <t:{int((disnake.utils.utcnow() + datetime.timedelta(seconds=30)).timestamp())}:R> để tiếp tục.',
+                                    f'Chọn một tùy chọn trong <t:{int((disnake.utils.utcnow() + datetime.timedelta(seconds=30)).timestamp())}:R> để tiếp tục.',
                         color=self.bot.get_color(guild.me)
                     )
 
@@ -1067,7 +1067,7 @@ class Music(commands.Cog):
 
                     embed = disnake.Embed(
                         description='**Liên kết chứa video với danh sách phát.**\n'
-                                    f'Chọn một tùy chọn theo <t:{int((disnake.utils.utcnow() + datetime.timedelta(seconds=30)).timestamp())}:R> để tiếp tục.',
+                                    f'Chọn một tùy chọn trong <t:{int((disnake.utils.utcnow() + datetime.timedelta(seconds=30)).timestamp())}:R> để tiếp tục.',
                         color=self.bot.get_color(guild.me)
                     )
 
@@ -3791,7 +3791,7 @@ class Music(commands.Cog):
     async def guild_pin(self, interaction: disnake.MessageInteraction):
 
         if not self.bot.bot_ready:
-            await interaction.send("ATôi đang khởi tạo...\nVui lòng đợi lâu hơn một chút...", ephemeral=True)
+            await interaction.send("Tôi đang khởi tạo...\nVui lòng đợi lâu hơn một chút...", ephemeral=True)
             return
 
         if interaction.data.custom_id != "player_guild_pin":
