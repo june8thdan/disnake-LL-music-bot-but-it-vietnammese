@@ -1461,7 +1461,7 @@ class Music(commands.Cog):
 
             if not player.is_connected:
                 try:
-                    embed.description += f"\n`Kênh giọng nói:` {voice_channel.mention}"
+                    embed.description += f"\n`Kênh:` {voice_channel.mention}"
                 except AttributeError:
                     pass
 
@@ -3874,7 +3874,7 @@ class Music(commands.Cog):
                 await self.process_player_interaction(interaction, cmd, kwargs)
                 return
 
-            if control == PlayerControls.fav_manageer:
+            if control == PlayerControls.fav_manager:
 
                 if str(interaction.user.id) not in interaction.message.content:
                     await interaction.send("Bạn không thể tương tác ở đây!", ephemeral=True)
@@ -3884,7 +3884,7 @@ class Music(commands.Cog):
                 await self.process_player_interaction(interaction, cmd, kwargs)
                 return
 
-            if control == PlayerControls.integration_manageer:
+            if control == PlayerControls.integration_manager:
 
                 if str(interaction.user.id) not in interaction.message.content:
                     await interaction.send("Bạn không thể tương tác ở đây!", ephemeral=True)
@@ -4954,7 +4954,7 @@ class Music(commands.Cog):
         if not player.text_channel.permissions_for(player.guild.me).send_messages:
             try:
                 print(f"{player.guild.name} [{player.guild_id}] - Chơi người chơi vì thiếu sự cho phép gửi "
-                      f"mensagens no canal: {player.text_channel.name} [{player.text_channel.id}]")
+                      f"Tin nhắn trên kênh: {player.text_channel.name} [{player.text_channel.id}]")
             except Exception:
                 traceback.print_exc()
             await player.destroy()
@@ -5123,7 +5123,7 @@ class Music(commands.Cog):
                         raise GenericError("**Không có máy chủ âm nhạc có sẵn.**")
 
         if not tracks:
-            raise GenericError("Não houve resultados para sua busca.")
+            raise GenericError("Không có kết quả cho tìm kiếm của bạn.")
 
         if isinstance(tracks, list):
             tracks[0].info["extra"]["track_loops"] = track_loops
@@ -5144,7 +5144,7 @@ class Music(commands.Cog):
                 'port': 8090,
                 'password': 'youshallnotpass',
                 'identifier': 'LOCAL',
-                'region': 'us_central',
+                'region': 'jp-japan',
                 'retries': 25
             }
 
@@ -5164,7 +5164,7 @@ class Music(commands.Cog):
         embed = disnake.Embed(color=self.bot.get_color(thread.guild.me))
 
         if self.bot.intents.message_content:
-            embed.description = "**Bạn chỉ cần ném linh hoặc tên của bài hát vào đây là tui sẽ tự thêm cho bạn**" \
+            embed.description = "**Bạn chỉ cần ném link hoặc tên của bài hát vào đây là tui sẽ tự thêm cho bạn**" \
 
         elif not player.controller_mode:
             embed.description = "**Vùng da/hiện tại không tương thích với hệ thống yêu cầu bài hát " \
