@@ -27,10 +27,10 @@ def can_send_message(
     perms = channel.permissions_for(channel.guild.me)
 
     if not perms.send_messages:
-        raise GenericError(f"**{bot.mention} não possui permissão de enviar mensagens no canal:** {channel.mention}")
+        raise GenericError(f"**{bot.mention} không có quyền gửi tin nhắn trên kênh:** {channel.mention}")
 
     if not perms.embed_links:
-        raise GenericError(f"**{bot.mention} não possui permissão de inserir links no canal: {channel.mention}**")
+        raise GenericError(f"**{bot.mention} không có quyền chèn liên kết vào kênh: {channel.mention}**")
 
     return True
 
@@ -57,7 +57,7 @@ async def check_requester_channel(ctx: CustomContext):
                 else:
                     return True
 
-        raise GenericError("**Use apenas comandos de barra (/) neste canal!**", self_delete=True, delete_original=15)
+        raise GenericError("**Chỉ sử dụng lệnh dấu gạch chéo (/) trong kênh này!**", self_delete=True, delete_original=15)
 
     return True
 
@@ -93,7 +93,7 @@ async def check_pool_bots(inter, only_voiced: bool = False, check_player: bool =
         return True
 
     if not inter.guild_id:
-        raise GenericError("**Esse comando não pode ser usado nas mensagens privada.**")
+        raise GenericError("**Lệnh này không thể được sử dụng trong các tin nhắn riêng tư.**")
 
     try:
         if inter.bot.user.id in inter.author.voice.channel.voice_states:
@@ -286,7 +286,7 @@ async def check_pool_bots(inter, only_voiced: bool = False, check_player: bool =
 
     if not inter.guild:
 
-        msg = "**Não há bots de música compatível no servidor...**"
+        msg = "**Không có chương trình âm nhạc nào được hỗ trợ trên máy chủ...**"
 
         for b in bot.pool.bots:
 
@@ -294,13 +294,13 @@ async def check_pool_bots(inter, only_voiced: bool = False, check_player: bool =
                 continue
 
         if extra_bots_counter:
-            msg += f"\n\nVocê terá que adicionar pelo menos um bot compatível clicando no botão abaixo:"
-            components = [disnake.ui.Button(custom_id="bot_invite", label="Adicionar bot(s).")]
+            msg += f"\n\nBạn sẽ phải thêm ít nhất một bot tương thích bằng cách nhấp vào nút bên dưới:"
+            components = [disnake.ui.Button(custom_id="bot_invite", label="Thêm (các) bot.")]
 
     else:
-        msg = "**Todos os bots estão em uso nomento...**"
+        msg = "**Tất cả các bot hiện đang được sử dụng...**"
         if extra_bots_counter:
-            components = [disnake.ui.Button(custom_id="bot_invite", label="Precisa de mais bots de música? Clique aqui.")]
+            components = [disnake.ui.Button(custom_id="bot_invite", label="Cần thêm bot âm nhạc? Bấm vào đây.")]
 
     inter.bot.dispatch("pool_dispatch", inter, None)
 
@@ -349,7 +349,7 @@ def can_send_message_check():
             if inter.guild_id:
                 return True
 
-            raise GenericError("**Este comando deve ser usado em um servidor...**")
+            raise GenericError("**Lệnh này phải được sử dụng trên máy chủ...**")
 
         # TODO: tempfix para canal de forum (thread arquyivada)
         if isinstance(inter.channel, disnake.PartialMessageable):
@@ -470,8 +470,8 @@ def check_stage_topic():
 
         if player.stage_title_event and (time_:=int((disnake.utils.utcnow() - player.start_time).total_seconds())) < 120:
             raise GenericError(
-                f"**Você terá que aguardar {time_format((120 - time_) * 1000, use_names=True)} para usar essa função "
-                f"com o anúncio automático do palco ativo...**"
+                f"**Bạn sẽ phải đợi {time_format((120 - time_) * 1000, use_names=True)} để sử dụng chức năng này "
+                f"với thông báo tự động của kênh sân khấu...**"
             )
 
         return True
@@ -514,8 +514,8 @@ async def has_perm(inter):
         return True
 
     if player.keep_connected:
-        raise GenericError(f"**Erro!** Apenas membros com a permissão de **gerenciar servidor** "
-                           "podem usar este comando/botão com o **modo 24/7 ativo**...")
+        raise GenericError(f"**Lỗi!** Chỉ thành viên có quyền **quản lý máy chủ** "
+                            "có thể sử dụng lệnh/nút này khi **chế độ 24/7 hoạt động**...")
 
     user_roles = [r.id for r in inter.author.roles]
 
@@ -533,8 +533,8 @@ async def has_perm(inter):
         return True
 
     if player.restrict_mode:
-        raise GenericError(f"**Erro!** Apenas DJ's ou membros com a permissão de **gerenciar servidor** "
-                           "podem usar este comando/botão com o **modo restrito ativo**...")
+        raise GenericError(f"**Lỗi!** Chỉ DJ hoặc thành viên có quyền **quản lý máy chủ**"
+                            "có thể sử dụng lệnh/nút này khi **chế độ hạn chế đang hoạt động**...")
 
     try:
         vc = player.guild.me.voice.channel
@@ -547,7 +547,7 @@ async def has_perm(inter):
     elif not [m for m in vc.members if not m.bot and (m.guild_permissions.manage_channels or (m.id in player.dj) or m.id == player.player_creator)]:
         player.dj.add(inter.author.id)
         await channel.send(embed=disnake.Embed(
-            description=f"{inter.author.mention} foi adicionado à lista de DJ's por não haver um no canal <#{vc.id}>.",
+            description=f"{inter.author.mention} đã được thêm vào danh sách DJ vì không có ai trên kênh <#{vc.id}>.",
             color=player.bot.get_color(guild.me)), delete_after=10)
 
     return True
@@ -576,26 +576,26 @@ def can_connect(
     perms = channel.permissions_for(guild.me)
 
     if not perms.connect:
-        raise GenericError(f"**Não tenho permissão para conectar no canal {channel.mention}**")
+        raise GenericError(f"**Tôi không có quyền kết nối với kênh {channel.mention}**")
 
     if not isinstance(channel, disnake.StageChannel):
 
         if not perms.speak:
-            raise GenericError(f"**Não tenho permissão para falar no canal {channel.mention}**")
+            raise GenericError(f"**Tôi không được phép nói trên kênh {channel.mention}**")
 
         if not guild.voice_client and not check_channel_limit(guild.me, channel):
-            raise GenericError(f"**O canal {channel.mention} está lotado!**")
+            raise GenericError(f"**Kênh {channel.mention} nó đầy rồi!**")
 
     if bot:
         for b in bot.pool.bots:
             if b == bot:
                 continue
             if b.bot_ready and b.user.id in channel.voice_states:
-                raise GenericError(f"**Já há um bot conectado no canal {channel.mention}\n"
+                raise GenericError(f"**Đã có bot kết nối với kênh {channel.mention}\n"
                                    f"Bot:** {b.user.mention}")
 
     if check_other_bots_in_vc and any(m for m in channel.members if m.bot and m.id != guild.me.id):
-        raise GenericError(f"**Há outro bot conectado no canal:** <#{channel.id}>")
+        raise GenericError(f"**Có một bot khác được kết nối với kênh:** <#{channel.id}>")
 
 async def check_deafen(me: disnake.Member = None):
 

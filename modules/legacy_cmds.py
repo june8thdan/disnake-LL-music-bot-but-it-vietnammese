@@ -144,7 +144,7 @@ class Owner(commands.Cog):
                 continue
 
         if not node and not args.force:
-            raise GenericError("**O servidor LOCAL não está sendo usado!**")
+            raise GenericError("**Máy chủ cục bộ không được sử dụng!**")
 
         download_urls = [self.bot.config["LAVALINK_FILE_URL"]]
 
