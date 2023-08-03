@@ -136,7 +136,7 @@ def parse_error(
         remaing = int(error.retry_after)
         if remaing < 1:
             remaing = 1
-        error_txt = "**Bạn phải đợi {} sử dụng lệnh này.**".format(time_format(int(remaing) * 1000, use_names=True))
+        error_txt = "**Bạn phải đợi {} mới có thể sử dụng lệnh này.**".format(time_format(int(remaing) * 1000, use_names=True))
 
     elif isinstance(error, EmptyFavIntegration):
 
